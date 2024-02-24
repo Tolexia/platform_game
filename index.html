@@ -49,15 +49,75 @@
           ctx.fill();
         },
     };
-      
+
+    class platform {
+        constructor(x,y,width,height){
+            this.x_start = x
+            this.y_start = y
+            this.width = width
+            this.height = height
+            this.x_end = x+width
+            this.y_end = y+height
+        }
+        draw(){
+            ctx.rect(this.x_start, this.y_start, this.width, this.height);
+            ctx.fillStyle = "black"
+            ctx.fill();
+        }
+    }
+    const win_width = window.innerWidth
+    const win_height = window.innerHeight
+    const platforms = [
+        new platform(0.2*win_width,0.9*win_height, 0.1*win_width, ball.radius * 5),
+        new platform(0.4*win_width,0.8*win_height, 0.1*win_width, ball.radius * 5),
+        new platform(0.6*win_width,0.7*win_height, 0.1*win_width, ball.radius * 5)
+    ]
+    
+    setInterval(()=> {
+          //console.log("plateform", platforms[0])
+          //console.log("ball", ball)
+    },2000)
     function draw() 
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
         ball.draw();
-        
+        let blockX = false
+        let blockY = false
+        for(const line of platforms)
+        {
+            line.draw()
+            if(
+                ball.x + ball.vx >= line.x_start - ball.radius && 
+                ball.x + ball.vx <= line.x_end + ball.radius
+            )
+            {
+                const onFloor = (ball.y + ball.vy  >= line.y_start - ball.radius) && (ball.y + ball.vy <= line.y_end)
+                const underneathFloor = (ball.y + ball.vy <= line.y_end + ball.radius) && (ball.y + ball.vy  >= line.y_start) 
+                //const underneathFloor = false 
+                if(
+                    onFloor || underneathFloor
+                )
+                {
+                    /*if(underneathFloor)
+                    {
+                        console.log("ball.y", ball.y)
+                        console.log("ball.vy", ball.vy)
+                        console.log("y_start", y_start)
+                        console.log("line.y_end", line.y_end)
+                        console.log("ball.radius", ball.radius)
+                    }*/
+                    blockY = true
+                    if(onFloor) jumpcount = 0
+                }
+            }
+        }
 
-         // Y
-        if ( ball.y + ball.vy >= canvas.height - ball.radius  ) 
+        // Y
+        if(blockY && !pressingUp)
+        {
+            ball.vy = 0
+        }
+        else if ( ball.y + ball.vy >= canvas.height - ball.radius  ) 
         {
             ball.vy = 0;
             jumpcount = 0;
@@ -66,6 +126,7 @@
             ball.vy = -ball.vy;
         }
 
+        // X
         if (
             ball.x + ball.vx >= canvas.width - ball.radius ||
             ball.x + ball.vx <= ball.radius
@@ -91,7 +152,7 @@
     let pressingLeft = false
     let pressingRight = false
     document.body.addEventListener("keydown", e => {
-        console.log("e", e)
+        console.log("jumpcount", jumpcount)
         if(e.key == "ArrowUp" && jumpcount < 2)
         {
             ball.vy = -10
@@ -109,6 +170,7 @@
         }
     })
     function up(){
+        console.log(ball.vy)
         if(ball.vy > -10) ball.vy -= 1
         if(pressingUp == true)window.requestAnimationFrame(up)
     }
