@@ -165,6 +165,7 @@
                     blockY = true
                     if(onFloor) jumpcount = 0
                 }
+                if(ball.y + ball.vy  >= line.y_start && ball.y + ball.vy <= line.y_end) blockX = true
             }
         }
         
@@ -183,7 +184,11 @@
         }
 
         // X
-        if (
+        if(blockX)
+        {
+            ball.vx = -ball.vx / 5
+        }
+        else if (
             ball.x + ball.vx >= canvas.width - ball.radius ||
             ball.x + ball.vx <= ball.radius
         ) {
@@ -236,8 +241,10 @@
         }
     })
 
-    const horizontalLimit = (win_width < 1000  ? win_width * 0.005 : win_width * 0.0026)
+    const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
     const horizontalTick = horizontalLimit / 20
+
+    const jumpHeight = win_height < 500 ? 5 : 10
     function up(){
         if(ball.vy > -10) ball.vy -= 1
         if(pressingUp == true)window.requestAnimationFrame(up)
@@ -261,7 +268,7 @@
     function press(callback){
         pressInterval = setInterval(() => {
             callback()
-        }, 100)
+        }, 50)
     }
     function unpress(callback){
         clearInterval(pressInterval)
@@ -270,7 +277,7 @@
     canvas.addEventListener('touchstart', e => {
         if(jumpcount < maxjump)
         {
-            ball.vy = -10
+            ball.vy = -jumpHeight
             jumpcount++
         }
     })
