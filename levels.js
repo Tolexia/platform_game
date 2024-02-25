@@ -1,5 +1,5 @@
 const win_width = window.innerWidth
-const win_height = window.innerHeight
+let win_height = 'ontouchstart' in window  ? window.innerHeight * 0.9 : window.innerHeight
 
 function level0()
 {

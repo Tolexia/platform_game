@@ -15,9 +15,10 @@
         padding: 0;
     }
     body{
+        flex-direction: column;
         display: flex;
         align-items: center;
-        justify-content: center;
+        justify-content: flex-start;
         width: 100lvw;
         height: 100dvh;
         overflow: hidden;
@@ -36,16 +37,37 @@
         opacity: .7;
         font-family: Arial, Helvetica, sans-serif;
     }
+
+    #pad{
+        display: flex;
+        justify-content: space-around;
+        width: 100%;
+    }
+
+    #pad > span {
+        width: 8dvh;
+        height: 8dvh;
+        margin-top: 10px;
+        background-color: #888c9d;
+        border-radius: 50%;
+        border: 8px solid darkgrey;
+    }
+
 </style>
 <body>
     <div id = "instructions"></div>
     <canvas id="canvas" ></canvas>
+    <div id="pad">
+        <span ontouchstart="press(left)" ontouchend="unpress(left)"></span>
+        <span ontouchstart="press(right)" ontouchend="unpress(right)"></span>
+    </div>
 </body>
 <script>
     var canvas = document.getElementById('canvas')
     var instructions = document.getElementById('instructions')
-    canvas.width = window.innerWidth
-    canvas.height = window.innerHeight
+    var pad = document.getElementById('pad')
+    canvas.width = win_width
+    canvas.height = win_height
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
     let raf;
@@ -69,7 +91,7 @@
         },
     };
 
-    
+    /* LEVELS */
 
     var platforms = []
     var exit 
@@ -113,6 +135,8 @@
             ball.y <= exit.y_end-ball.radius
         )
     }
+
+    /* ANIMATION */
     function draw() 
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -186,6 +210,8 @@
         raf = window.requestAnimationFrame(draw);
     }
 
+    /* MOVES */
+
     let jumpcount = 0
 
     let pressingUp = false
@@ -193,7 +219,6 @@
     let pressingLeft = false
     let pressingRight = false
     document.body.addEventListener("keydown", e => {
-        console.log("jumpcount", jumpcount)
         if(e.key == "ArrowUp" && jumpcount < maxjump)
         {
             ball.vy = -10
@@ -210,17 +235,19 @@
             right()
         }
     })
+
+    const horizontalLimit = (win_width < 1000  ? win_width * 0.005 : win_width * 0.0026)
+    const horizontalTick = horizontalLimit / 20
     function up(){
-        console.log(ball.vy)
         if(ball.vy > -10) ball.vy -= 1
         if(pressingUp == true)window.requestAnimationFrame(up)
     }
     function left(){
-        if(ball.vx > -5) ball.vx -= 0.25
+        if(ball.vx > -horizontalLimit) ball.vx -= horizontalTick
         if(pressingLeft == true)window.requestAnimationFrame(left)
     }
     function right(){
-        if(ball.vx < 5) ball.vx += 0.5
+        if(ball.vx < horizontalLimit) ball.vx += horizontalTick
         if(pressingRight == true)window.requestAnimationFrame(right)
     }
     document.body.addEventListener("keyup", e => {
@@ -228,6 +255,31 @@
             pressingLeft = false 
         if(e.key == "ArrowRight")
             pressingRight = false 
+    })
+
+    var pressInterval
+    function press(callback){
+        pressInterval = setInterval(() => {
+            callback()
+        }, 100)
+    }
+    function unpress(callback){
+        clearInterval(pressInterval)
+    }
+
+    canvas.addEventListener('touchstart', e => {
+        if(jumpcount < maxjump)
+        {
+            ball.vy = -10
+            jumpcount++
+        }
+    })
+
+    screen.orientation.addEventListener("change", ()=> {
+        window.location.reload()
+    })
+    window.addEventListener("resize", ()=> {
+        window.location.reload()
     })
     
     

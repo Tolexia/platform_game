@@ -10,6 +10,6 @@ class exit_door {
     }
     draw(){
         ctx.fillStyle = "rgb(255, 0, 0)"
-        ctx.fillRect(this.x_start, this.y_start, this.width, this.height);
+        ctx.fillRect(this.x_start+this.width/2, this.y_start, this.width, this.height);
     }
 }
