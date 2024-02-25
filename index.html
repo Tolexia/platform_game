@@ -4,6 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
+    <script src="./exitdoor.js"></script>
+    <script src="./platform.js"></script>
+    <script src="./levels.js"></script>
 </head>
 <style>
     *{
@@ -22,22 +25,38 @@
     canvas{
         border: 1px solid black;
     }
+    #instructions{
+        position: absolute;
+        top: 50%;
+        left: 50%;
+        transform: translate(-50%, -50%);
+        width: 50lvw;
+        height: 50dvh;
+        text-align: center;
+        opacity: .7;
+        font-family: Arial, Helvetica, sans-serif;
+    }
 </style>
 <body>
+    <div id = "instructions"></div>
     <canvas id="canvas" ></canvas>
 </body>
 <script>
     var canvas = document.getElementById('canvas')
+    var instructions = document.getElementById('instructions')
     canvas.width = window.innerWidth
     canvas.height = window.innerHeight
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
     let raf;
 
+    const coord_x_start = win_width*0.1
+    const coord_y_start = win_height*0.9
+
     const ball = {
-        x: 100,
-        y: 100,
-        vx: 5,
+        x: coord_x_start,
+        y: coord_y_start,
+        vx: 2,
         vy: 2,
         radius: 5,
         color: "blue",
@@ -50,37 +69,59 @@
         },
     };
 
-    class platform {
-        constructor(x,y,width,height){
-            this.x_start = x
-            this.y_start = y
-            this.width = width
-            this.height = height
-            this.x_end = x+width
-            this.y_end = y+height
-        }
-        draw(){
-            ctx.rect(this.x_start, this.y_start, this.width, this.height);
-            ctx.fillStyle = "black"
-            ctx.fill();
-        }
-    }
-    const win_width = window.innerWidth
-    const win_height = window.innerHeight
-    const platforms = [
-        new platform(0.2*win_width,0.9*win_height, 0.1*win_width, ball.radius * 5),
-        new platform(0.4*win_width,0.8*win_height, 0.1*win_width, ball.radius * 5),
-        new platform(0.6*win_width,0.7*win_height, 0.1*win_width, ball.radius * 5)
-    ]
     
-    setInterval(()=> {
-          //console.log("plateform", platforms[0])
-          //console.log("ball", ball)
-    },2000)
+
+    var platforms = []
+    var exit 
+    var currentLevel = localStorage.getItem('current_level') != null ? + localStorage.getItem('current_level') : 0;
+    var maxjump 
+
+    function setMaxJump()
+    {
+        maxjump = currentLevel > 2 ? 2 : 1
+    }
+    function launchLevel()
+    {
+        ball.x = coord_x_start
+        ball.Y = coord_y_start
+        instructions.innerHTML = ""
+        if(window["level"+currentLevel])
+        {
+            window["level"+currentLevel]()
+        }
+        else
+        {
+            alert("Game Over.\n Congrats !")
+            localStorage.setItem("current_level", 0)
+            currentLevel = 0
+            level0()
+        }
+        setMaxJump()
+    }
+
+    launchLevel()
+    
+
+    var hasWon = false;
+    function checkHasWon()
+    {
+        
+        return (
+            ball.x+ball.radius >= exit.x_start && 
+            ball.x <= exit.x_end-ball.radius && 
+            ball.y+ball.radius >= exit.y_start && 
+            ball.y <= exit.y_end-ball.radius
+        )
+    }
     function draw() 
     {
         ctx.clearRect(0, 0, canvas.width, canvas.height);
-        ball.draw();
+
+        exit.draw()
+        
+        if(!hasWon)
+            ball.draw();
+
         let blockX = false
         let blockY = false
         for(const line of platforms)
@@ -93,25 +134,16 @@
             {
                 const onFloor = (ball.y + ball.vy  >= line.y_start - ball.radius) && (ball.y + ball.vy <= line.y_end)
                 const underneathFloor = (ball.y + ball.vy <= line.y_end + ball.radius) && (ball.y + ball.vy  >= line.y_start) 
-                //const underneathFloor = false 
                 if(
                     onFloor || underneathFloor
                 )
                 {
-                    /*if(underneathFloor)
-                    {
-                        console.log("ball.y", ball.y)
-                        console.log("ball.vy", ball.vy)
-                        console.log("y_start", y_start)
-                        console.log("line.y_end", line.y_end)
-                        console.log("ball.radius", ball.radius)
-                    }*/
                     blockY = true
                     if(onFloor) jumpcount = 0
                 }
             }
         }
-
+        
         // Y
         if(blockY && !pressingUp)
         {
@@ -142,6 +174,15 @@
 
         ball.vx *= 0.99
         
+        hasWon = checkHasWon()
+        if(hasWon)
+        {
+            currentLevel++
+            localStorage.setItem("current_level", currentLevel)
+            launchLevel()
+            hasWon = false
+        }
+        
         raf = window.requestAnimationFrame(draw);
     }
 
@@ -153,7 +194,7 @@
     let pressingRight = false
     document.body.addEventListener("keydown", e => {
         console.log("jumpcount", jumpcount)
-        if(e.key == "ArrowUp" && jumpcount < 2)
+        if(e.key == "ArrowUp" && jumpcount < maxjump)
         {
             ball.vy = -10
             jumpcount++
