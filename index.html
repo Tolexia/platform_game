@@ -4,8 +4,8 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="./exitdoor.js"></script>
     <script src="./platform.js"></script>
+    <script src="./exitdoor.js"></script>
     <script src="./levels.js"></script>
 </head>
 <style>
@@ -28,7 +28,7 @@
     }
     #instructions{
         position: absolute;
-        top: 50%;
+        top: 30%;
         left: 50%;
         transform: translate(-50%, -50%);
         width: 50lvw;
@@ -43,7 +43,12 @@
         justify-content: space-around;
         width: 100%;
     }
-
+    #pad .spacebar{
+        background-color: #888c9d;
+        box-shadow: inset 0px 0px 10px white;
+        border-radius: 12px;
+        width:50%;
+    }
     #pad > span {
         width: 8dvh;
         height: 8dvh;
@@ -59,6 +64,7 @@
     <canvas id="canvas" ></canvas>
     <div id="pad">
         <span ontouchstart="press(left)" ontouchend="unpress(left)"></span>
+        <div class="spacebar" onclick="up()"></div>
         <span ontouchstart="press(right)" ontouchend="unpress(right)"></span>
     </div>
 </body>
@@ -96,6 +102,9 @@
     var platforms = []
     var exit 
     var currentLevel = localStorage.getItem('current_level') != null ? + localStorage.getItem('current_level') : 0;
+    const paramLevel = (new URL(document.location)).searchParams.get("level")
+    if(paramLevel != null) currentLevel = paramLevel
+    
     var maxjump 
 
     function setMaxJump()
@@ -186,7 +195,7 @@
         // X
         if(blockX)
         {
-            ball.vx = -ball.vx / 5
+            ball.vx = -ball.vx / 2
         }
         else if (
             ball.x + ball.vx >= canvas.width - ball.radius ||
@@ -218,6 +227,7 @@
     /* MOVES */
 
     let jumpcount = 0
+    const jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 8 : 10)
 
     let pressingUp = false
     let pressingDown = false
@@ -226,7 +236,7 @@
     document.body.addEventListener("keydown", e => {
         if(e.key == "ArrowUp" && jumpcount < maxjump)
         {
-            ball.vy = -10
+            ball.vy = -jumpHeight
             jumpcount++
         }
         if(e.key == "ArrowLeft")
@@ -244,10 +254,13 @@
     const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
     const horizontalTick = horizontalLimit / 20
 
-    const jumpHeight = win_height < 500 ? 5 : 10
+    
     function up(){
-        if(ball.vy > -10) ball.vy -= 1
-        if(pressingUp == true)window.requestAnimationFrame(up)
+        if(jumpcount < maxjump)
+        {
+            ball.vy = -jumpHeight
+            jumpcount++
+        } 
     }
     function left(){
         if(ball.vx > -horizontalLimit) ball.vx -= horizontalTick
@@ -274,13 +287,6 @@
         clearInterval(pressInterval)
     }
 
-    canvas.addEventListener('touchstart', e => {
-        if(jumpcount < maxjump)
-        {
-            ball.vy = -jumpHeight
-            jumpcount++
-        }
-    })
 
     screen.orientation.addEventListener("change", ()=> {
         window.location.reload()
