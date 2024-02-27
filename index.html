@@ -4,8 +4,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Document</title>
-    <script src="./platform.js"></script>
     <script src="./exitdoor.js"></script>
+    <script src="./platform.js"></script>
+    <script src="./portal.js"></script>
     <script src="./levels.js"></script>
 </head>
 <style>
@@ -64,7 +65,7 @@
     <canvas id="canvas" ></canvas>
     <div id="pad">
         <span ontouchstart="press(left)" ontouchend="unpress(left)"></span>
-        <div class="spacebar" onclick="up()"></div>
+        <div class="spacebar" ontouchstart="up()"></div>
         <span ontouchstart="press(right)" ontouchend="unpress(right)"></span>
     </div>
 </body>
@@ -82,11 +83,11 @@
     const coord_y_start = win_height*0.9
 
     const ball = {
-        x: coord_x_start,
-        y: coord_y_start,
         vx: 2,
         vy: 2,
         radius: 5,
+        x: 10,
+        y: win_height-10,
         color: "blue",
         draw() {
           ctx.beginPath();
@@ -100,6 +101,7 @@
     /* LEVELS */
 
     var platforms = []
+    var portals = []
     var exit 
     var currentLevel = localStorage.getItem('current_level') != null ? + localStorage.getItem('current_level') : 0;
     const paramLevel = (new URL(document.location)).searchParams.get("level")
@@ -145,6 +147,7 @@
         )
     }
 
+    var teleporting = false
     /* ANIMATION */
     function draw() 
     {
@@ -157,6 +160,8 @@
 
         let blockX = false
         let blockY = false
+
+        // Draw Platforms
         for(const line of platforms)
         {
             line.draw()
@@ -175,6 +180,33 @@
                     if(onFloor) jumpcount = 0
                 }
                 if(ball.y + ball.vy  >= line.y_start && ball.y + ball.vy <= line.y_end) blockX = true
+            }
+        }
+
+        // Draw Portals
+        for(const portal of portals)
+        {
+            portal.draw()
+            if(teleporting) continue;
+
+            for(entrance of [portal.entrance, portal.exit])
+            {
+                
+                if(
+                    ball.x  >= entrance.x_start + ball.radius && 
+                    ball.x  <= entrance.x_end - ball.radius &&
+                    ball.y  >= entrance.y_start + ball.radius && 
+                    ball.y  <= entrance.y_end - ball.radius
+                )
+                {
+                    console.log("entrance", entrance)
+                    console.log("exit", entrance.bound)
+                    ball.x = entrance.bound.x_start + (portal.width / 2)
+                    ball.y = entrance.bound.y_start + (portal.height / 2)
+                    teleporting = true
+                    setTimeout(() => teleporting = false, 500)
+                    break;
+                }
             }
         }
         

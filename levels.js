@@ -8,6 +8,7 @@ function level0()
 {
     instructions.innerHTML = isMobile ? "Press Left or Right joystick to move" : ("Use Left and Right arrows to move")
     platforms = []
+    portals = []
     exit = new exit_door(0.85*win_width, win_height)
 }
 function level1()
@@ -66,4 +67,26 @@ function level5()
         new platform(0.8*win_width,0.3*win_height, platform_width/2, ball.radius * 5)
     ]
     exit = new exit_door(0.8*win_width+platform_width/4,0.3*win_height)
+}
+function level6()
+{
+    platforms = [
+        new platform(0*win_width,0.9*win_height, platform_width*2, ball.radius * 5),
+        new platform(win_width-(platform_width*2),0.2*win_height, platform_width*2, ball.radius * 5),
+    ]
+    portals = [
+
+        new portal(
+            {
+                x:20, 
+                y:0.9*win_height
+            },
+            {
+                x:win_width-40, 
+                y:0.2*win_height
+            }
+        ),
+    ]
+
+    exit = new exit_door(0.8*win_width+platform_width/4,0.2*win_height)
 }
