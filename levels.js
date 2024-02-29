@@ -82,7 +82,7 @@ function level6()
                 y:0.9*win_height
             },
             {
-                x:win_width-40, 
+                x:win_width-15, 
                 y:0.2*win_height
             }
         ),

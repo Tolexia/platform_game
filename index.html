@@ -199,8 +199,6 @@
                     ball.y  <= entrance.y_end - ball.radius
                 )
                 {
-                    console.log("entrance", entrance)
-                    console.log("exit", entrance.bound)
                     ball.x = entrance.bound.x_start + (portal.width / 2)
                     ball.y = entrance.bound.y_start + (portal.height / 2)
                     teleporting = true
