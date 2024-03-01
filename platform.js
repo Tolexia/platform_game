@@ -1,5 +1,5 @@
 class platform {
-    constructor(x,y,width,height){
+    constructor(x,y,width,height = ball.radius*5 ){
         this.x_start = x
         this.y_start = y
         this.width = width
