@@ -13,7 +13,7 @@ function level0()
 }
 function level1()
 {
-    instructions.innerHTML = isMobile ? "Touch the game screen to jump" : ("Use Up arrow to jump")
+    instructions.innerHTML = isMobile ? "Touch the spacebar to jump" : ("Use Up arrow to jump")
     platforms = [
         new platform(0.2*win_width,0.9*win_height, platform_width),
         new platform(0.4*win_width,0.8*win_height, platform_width),
@@ -93,17 +93,17 @@ function level6()
 function level7()
 {
     platforms = [
-        new platform(0*win_width,0.9*win_height, platform_width*2),
-        new platform(0.5*win_width,0.7*win_height, platform_width*2),
-        new platform(0.5*win_width,0.3*win_height, platform_width*2),
-        new platform(win_width-(platform_width*2),0.15*win_height, platform_width*2),
+        new platform(0.2*win_width,0.8*win_height, platform_width),
+        new platform(0.5*win_width-(platform_width/2),0.6*win_height, platform_width*2),
+        new platform(0.5*win_width-(platform_width/2),0.3*win_height, platform_width*2),
+        new platform(win_width-(platform_width*2),0.15*win_height, platform_width),
     ]
     portals = [
 
         new portal(
             {
                 x:0.5*win_width+platform_width/2, 
-                y:0.7*win_height
+                y:0.6*win_height
             },
             {
                 x:0.5*win_width+platform_width/2, 
@@ -112,5 +112,75 @@ function level7()
         ),
     ]
 
-    exit = new exit_door(0.8*win_width+platform_width/4,0.15*win_height)
+    exit = new exit_door(win_width-(platform_width*1.5),0.15*win_height)
+}
+function level8()
+{
+    platforms = [
+        new platform(win_width-platform_width,0.8*win_height, platform_width),
+        new platform(0.5*win_width,0.6*win_height, platform_width),
+        new platform(0.25*win_width,0.4*win_height, platform_width),
+        new platform(0 ,0.2*win_height, platform_width),
+        new platform(0.25*win_width ,0.06*win_height, platform_width),
+        new platform(0.7*win_width ,0.06*win_height, platform_width),
+        new platform(win_width-platform_width ,0.15*win_height, platform_width),
+    ]
+    portals = [
+
+        new portal(
+            {
+                x:0.25*win_width+platform_width/2, 
+                y:0.06*win_height
+            },
+            {
+                x:0.7*win_width+platform_width/2, 
+                y:0.06*win_height
+            }
+        ),
+    ]
+
+    exit = new exit_door(win_width-(platform_width/4),0.15*win_height)
+}
+function level9()
+{
+    platforms = [
+        new platform(0,0.8*win_height, platform_width),
+        new platform(win_width-platform_width,0.4*win_height, platform_width),
+        new platform(0.5*win_width-(platform_width/2),0.2*win_height, platform_width),
+    ]
+    portals = [
+
+        new portal(
+            {
+                x:0.2*win_width+platform_width/2, 
+                y:0.7*win_height
+            },
+            {
+                x:0.6*win_width, 
+                y:0.4*win_height
+            }
+        ),
+    ]
+
+    exit = new exit_door(0.5*win_width-(platform_width/4),0.2*win_height)
+}
+function level10()
+{
+    platforms = [
+        new platform(0,0.8*win_height, platform_width),
+    ]
+    portals = [
+        new portal(
+            {
+                x:0.2*win_width+platform_width/2, 
+                y:0.7*win_height
+            },
+            {
+                x:0.6*win_width, 
+                y:0.4*win_height
+            }
+        ),
+    ]
+
+    exit = new exit_door(win_width-(platform_width/4),0.22*win_height)
 }
