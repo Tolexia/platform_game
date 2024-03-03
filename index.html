@@ -271,13 +271,13 @@
             ball.vx = 0;
         }
 
-        ball.x += ball.vx / inertiaDivider;
-        ball.y += ball.vy / inertiaDivider;
+        ball.x += ball.vx * inertiaDivider;
+        ball.y += ball.vy * inertiaDivider;
 
-        ball.vy *= 0.99 / inertiaDivider;
-        ball.vy += 0.25 / inertiaDivider;
+        ball.vy *= 0.99 * inertiaDivider;
+        ball.vy += 0.25 * inertiaDivider;
 
-        ball.vx *= 0.99 / inertiaDivider
+        ball.vx *= 0.99 * inertiaDivider
         
         hasWon = checkHasWon()
         if(hasWon)
