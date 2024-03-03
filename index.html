@@ -162,19 +162,21 @@
     /* ANIMATION */
     let frameCount = 0;
     let ellapsedTime = window.performance.now()
+    let hasInitFrameRate = false
+    let inertiaDivider = 1
     function draw() 
     {
         // Lock framerate to 60
-        if(frameCount > 60 && window.performance.now() - ellapsedTime < 1000)
-            return window.requestAnimationFrame(draw)
-
-        if(window.performance.now() - ellapsedTime >= 1000)
+        if(!hasInitFrameRate)
         {
-            ellapsedTime = window.performance.now()
-            frameCount = 0
+            if(window.performance.now() - ellapsedTime >= 1000)
+            {
+                inertiaDivider = frameCount / 60
+                hasInitFrameRate = true
+            }
+            else
+                frameCount++;
         }
-        else
-            frameCount++;
 
         
 
@@ -269,13 +271,13 @@
             ball.vx = 0;
         }
 
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        ball.x += ball.vx / inertiaDivider;
+        ball.y += ball.vy / inertiaDivider;
 
-        ball.vy *= 0.99;
-        ball.vy += 0.25;
+        ball.vy *= 0.99 / inertiaDivider;
+        ball.vy += 0.25 / inertiaDivider;
 
-        ball.vx *= 0.99
+        ball.vx *= 0.99 / inertiaDivider
         
         hasWon = checkHasWon()
         if(hasWon)
