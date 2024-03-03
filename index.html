@@ -163,18 +163,28 @@
     let frameCount = 0;
     let ellapsedTime = window.performance.now()
     let hasInitFrameRate = false
-    let inertiaDivider = 1
+    let gravityTick = 0.25
+    let inertia = 0.99
     function draw() 
     {
         // Lock framerate to 60
         if(!hasInitFrameRate)
         {
-            if(window.performance.now() - ellapsedTime >= 999)
+            if(window.performance.now() - ellapsedTime >= 1000)
             {
-                inertiaDivider =  frameCount - 60;
-                if(inertiaDivider < 1) inertiaDivider = 1
+                if(frameCount >= 120)
+                {
+                    gravityTick = 0.2
+                    inertia =  0.999
+                }
+                    
+                if(frameCount >= 180)
+                {
+                    gravityTick = 0.1
+                    inertia =  0.9999
+                }
+                
                 hasInitFrameRate = true
-                console.log("frameCount", frameCount);
             }
             else
                 frameCount++;
@@ -276,10 +286,10 @@
         ball.x += ball.vx;
         ball.y += ball.vy;
 
-        ball.vy *= 0.99 / inertiaDivider;
-        ball.vy += 0.25 / inertiaDivider;
+        ball.vy *= inertia ;
+        ball.vy += gravityTick;
 
-        ball.vx *= 0.99 / inertiaDivider
+        ball.vx *= inertia
         
         hasWon = checkHasWon()
         if(hasWon)
@@ -297,11 +307,11 @@
 
     let jumpcount = 0
     let jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 8 : 10)
-    if(win_width >= 1900 && win_height >= 915)
-    {
-        jumpHeight = 12
-    }
-
+    // if(win_width >= 1900 && win_height >= 915)
+    // {
+    //     jumpHeight = 12
+    // }
+    console.log("jumpHeight", jumpHeight);
     let pressingUp = false
     let pressingDown = false
     let pressingLeft = false
