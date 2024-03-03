@@ -171,7 +171,8 @@
         {
             if(window.performance.now() - ellapsedTime >= 999)
             {
-                inertiaDivider =  60 / frameCount
+                inertiaDivider =  frameCount - 60;
+                if(inertiaDivider < 1) inertiaDivider = 1
                 hasInitFrameRate = true
                 console.log("frameCount", frameCount);
             }
@@ -272,13 +273,13 @@
             ball.vx = 0;
         }
 
-        ball.x += ball.vx * inertiaDivider;
-        ball.y += ball.vy * inertiaDivider;
+        ball.x += ball.vx / inertiaDivider;
+        ball.y += ball.vy / inertiaDivider;
 
-        ball.vy *= 0.99 * inertiaDivider;
-        ball.vy += 0.25 * inertiaDivider;
+        ball.vy *= 0.99 / inertiaDivider;
+        ball.vy += 0.25 / inertiaDivider;
 
-        ball.vx *= 0.99 * inertiaDivider
+        ball.vx *= 0.99 / inertiaDivider
         
         hasWon = checkHasWon()
         if(hasWon)
