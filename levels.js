@@ -145,7 +145,7 @@ function level9()
 {
     platforms = [
         new platform(0,0.8*win_height, platform_width),
-        new platform(win_width-platform_width,0.4*win_height, platform_width),
+        new platform(0.6*win_width + platform_width,0.4*win_height, platform_width),
         new platform(0.5*win_width-(platform_width/2),0.2*win_height, platform_width),
     ]
     portals = [
@@ -182,5 +182,5 @@ function level10()
         ),
     ]
 
-    exit = new exit_door(win_width-(platform_width/4),0.22*win_height)
+    exit = new exit_door(0.7*win_width,0.22*win_height)
 }

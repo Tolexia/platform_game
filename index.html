@@ -149,17 +149,35 @@
     {
         
         return (
-            ball.x+ball.radius >= exit.x_start && 
-            ball.x <= exit.x_end-ball.radius && 
-            ball.y+ball.radius >= exit.y_start && 
-            ball.y <= exit.y_end-ball.radius
+            ball.x+ball.vx >= exit.x_start+ball.radius && 
+            ball.x+ball.vx <= exit.x_end-ball.radius && 
+            ball.y+ball.vy >= exit.y_start+ball.radius && 
+            ball.y+ball.vy <= exit.y_end
         )
     }
 
     var teleporting = false
+
+
     /* ANIMATION */
+    let frameCount = 0;
+    let ellapsedTime = window.performance.now()
     function draw() 
     {
+        // Lock framerate to 60
+        if(frameCount > 60 && window.performance.now() - ellapsedTime < 1000)
+            return window.requestAnimationFrame(draw)
+
+        if(window.performance.now() - ellapsedTime >= 1000)
+        {
+            ellapsedTime = window.performance.now()
+            frameCount = 0
+        }
+        else
+            frameCount++;
+
+        
+
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         exit.draw()
@@ -179,8 +197,8 @@
                 ball.x + ball.vx <= line.x_end + ball.radius
             )
             {
-                const onFloor = (ball.y + ball.vy  >= line.y_start - ball.radius) && (ball.y + ball.vy <= line.y_end)
-                const underneathFloor = (ball.y + ball.vy <= line.y_end + ball.radius) && (ball.y + ball.vy  >= line.y_start) 
+                const onFloor = (ball.y + ball.vy  >= line.y_start - ball.radius) && (ball.y + ball.vy <= line.y_end - ball.radius)
+                const underneathFloor = (ball.y + ball.vy  <= line.y_end + ball.radius)  && (ball.y + ball.vy >= line.y_start + ball.radius)
                 if(
                     onFloor || underneathFloor
                 )
@@ -188,7 +206,15 @@
                     blockY = true
                     if(onFloor) jumpcount = 0
                 }
-                if(ball.y + ball.vy  >= line.y_start && ball.y + ball.vy <= line.y_end) blockX = true
+                const withinFloor = (
+                       (ball.y + ball.vy <= line.y_end + ball.radius) 
+                       && (ball.y + ball.vy  >= line.y_start)
+                       && (
+                        (ball.x + ball.vx <= line.x_start + (ball.radius*2))
+                       || (ball.x + ball.vx >= line.x_end - (ball.radius*2))
+                       )
+                )
+                if(withinFloor) blockX = true
             }
         }
 
@@ -202,10 +228,10 @@
             {
                 
                 if(
-                    ball.x  >= entrance.x_start + ball.radius && 
-                    ball.x  <= entrance.x_end - ball.radius &&
-                    ball.y  >= entrance.y_start + ball.radius && 
-                    ball.y  <= entrance.y_end - ball.radius
+                    ball.x+ball.vx >= entrance.x_start+ball.radius && 
+                    ball.x+ball.vx <= entrance.x_end-ball.radius && 
+                    ball.y+ball.vy >= entrance.y_start+ball.radius && 
+                    ball.y+ball.vy <= entrance.y_end
                 )
                 {
                     ball.x = entrance.bound.x_start + (portal.width / 2)
