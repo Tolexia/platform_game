@@ -169,10 +169,11 @@
         // Lock framerate to 60
         if(!hasInitFrameRate)
         {
-            if(window.performance.now() - ellapsedTime >= 1000)
+            if(window.performance.now() - ellapsedTime >= 999)
             {
                 inertiaDivider =  60 / frameCount
                 hasInitFrameRate = true
+                console.log("frameCount", frameCount);
             }
             else
                 frameCount++;
@@ -294,7 +295,11 @@
     /* MOVES */
 
     let jumpcount = 0
-    const jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 8 : 10)
+    let jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 8 : 10)
+    if(win_width >= 1900 && win_height >= 915)
+    {
+        jumpHeight = 12
+    }
 
     let pressingUp = false
     let pressingDown = false
