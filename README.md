@@ -10,4 +10,4 @@ More levels incoming..
 
 ## Démo
 
-[Github Page](https://tolexia.github.io/platform_game/)]
+[Github Page](https://tolexia.github.io/platform_game/)
