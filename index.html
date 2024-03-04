@@ -3,7 +3,9 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Document</title>
+    <title>Platform Game</title>
+    <link rel="stylesheet" href="./sweet_alert/sweetalert.min.css">
+    <script src="./sweet_alert/sweetalert.min.js"></script>
     <script src="./exitdoor.js"></script>
     <script src="./platform.js"></script>
     <script src="./portal.js"></script>
@@ -23,6 +25,7 @@
         justify-content: flex-start;
         width: 100lvw;
         height: 100dvh;
+        font-family: Arial, Helvetica, sans-serif;
     }
     canvas{
         border: 1px solid black;
@@ -133,7 +136,10 @@
         }
         else
         {
-            alert("Game Over.\n Congrats !")
+            Swal.fire({
+                title: "🎉 GAME OVER 🎉",
+                html: "Congratulations !<br/>You made through all the levels.<br/>Keep in touch, many more are yet to come ! 🔵",
+              });
             localStorage.setItem("current_level", 0)
             currentLevel = 0
             level0()
@@ -196,7 +202,7 @@
 
         exit.draw()
         
-        if(!hasWon)
+        //if(!hasWon)
             ball.draw();
 
         let blockX = false
