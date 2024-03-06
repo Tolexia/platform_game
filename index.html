@@ -53,10 +53,9 @@
         border-radius: 12px;
         width:50%;
     }
-    #pad > span {
-        width: 8dvh;
-        height: 8dvh;
-        margin-top: 10px;
+    #pad > button {
+        width: 10dvh;
+        height: 10dvh;
         background-color: #888c9d;
         border-radius: 50%;
         border: 8px solid darkgrey;
@@ -76,9 +75,9 @@
     <div id = "instructions"></div>
     <canvas id="canvas" ></canvas>
     <div id="pad">
-        <span ontouchstart="press(left)" ontouchend="unpress(left)"></span>
+        <button type = "button" ontouchstart="press(left)" ontouchend="unpress(left)"></button>
         <div class="spacebar" ontouchstart="up()"></div>
-        <span ontouchstart="press(right)" ontouchend="unpress(right)"></span>
+        <button type = "button" ontouchstart="press(right)" ontouchend="unpress(right)"></button>
     </div>
 </body>
 <script>
@@ -169,8 +168,8 @@
     let frameCount = 0;
     let ellapsedTime = window.performance.now()
     let hasInitFrameRate = false
-    let gravityTick = 0.25
-    let inertia = 0.99
+    let gravityTick = 0.3
+    let inertia = 0.9
     function draw() 
     {
         // Lock framerate to 60
@@ -181,13 +180,13 @@
                 if(frameCount >= 120)
                 {
                     gravityTick = 0.16
-                    inertia =  0.999
+                    inertia =  0.99
                 }
                     
                 if(frameCount >= 180)
                 {
                     gravityTick = 0.08
-                    inertia =  0.9999
+                    inertia =  0.999
                 }
                 
                 hasInitFrameRate = true
@@ -274,7 +273,7 @@
             jumpcount = 0;
         }
         else if (ball.y + ball.vy < ball.radius) {
-            ball.vy = -ball.vy;
+            ball.vy = 0;
         }
 
         // X
@@ -341,7 +340,7 @@
     })
 
     const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
-    const horizontalTick = horizontalLimit / 20
+    const horizontalTick = horizontalLimit / 15
 
     
     function up(){
