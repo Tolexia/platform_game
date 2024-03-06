@@ -168,8 +168,8 @@
     let frameCount = 0;
     let ellapsedTime = window.performance.now()
     let hasInitFrameRate = false
-    let gravityTick = 0.3
-    let inertia = 0.9
+    let gravityTick = 0.28
+    let inertia = 0.97
     function draw() 
     {
         // Lock framerate to 60
@@ -311,12 +311,11 @@
     /* MOVES */
 
     let jumpcount = 0
-    let jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 8 : 10)
+    let jumpHeight = win_height < 500  ? 7 : (win_width < 500  ? 8 : 10)
     // if(win_width >= 1900 && win_height >= 915)
     // {
     //     jumpHeight = 12
     // }
-    console.log("jumpHeight", jumpHeight);
     let pressingUp = false
     let pressingDown = false
     let pressingLeft = false
@@ -340,7 +339,7 @@
     })
 
     const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
-    const horizontalTick = horizontalLimit / 15
+    const horizontalTick = horizontalLimit / 17
 
     
     function up(){
