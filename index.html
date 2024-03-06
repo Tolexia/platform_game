@@ -75,9 +75,9 @@
     <div id = "instructions"></div>
     <canvas id="canvas" ></canvas>
     <div id="pad">
-        <button type = "button" ontouchstart="press(left)" ontouchend="unpress(left)"></button>
+        <button id = "joystick_left" type = "button" ontouchstart="press(this, left)" ontouchend="unpress(this, left)"></button>
         <div class="spacebar" ontouchstart="up()"></div>
-        <button type = "button" ontouchstart="press(right)" ontouchend="unpress(right)"></button>
+        <button id = "joystick_right" type = "button" ontouchstart="press(this, right)" ontouchend="unpress(this, right)"></button>
     </div>
 </body>
 <script>
@@ -364,14 +364,13 @@
             pressingRight = false 
     })
 
-    var pressInterval
-    function press(callback){
-        pressInterval = setInterval(() => {
+    function press(button, callback){
+        window["pressInterval_"+button.id] = setInterval(() => {
             callback()
         }, 50)
     }
-    function unpress(callback){
-        clearInterval(pressInterval)
+    function unpress(button, callback){
+        clearInterval(window["pressInterval_"+button.id])
     }
 
 
