@@ -40,7 +40,7 @@ function level3()
 {
     instructions.innerHTML = ("You can now double jump")
     platforms = [
-        new platform(0.8*win_width,0.85*win_height, platform_width),
+        new platform(0.5*win_width,0.85*win_height, platform_width),
         new platform(0.2*win_width,0.7*win_height, platform_width),
         new platform(0.5*win_width,0.5*win_height, platform_width),
         new platform(0.7*win_width,0.3*win_height, platform_width),
@@ -182,5 +182,5 @@ function level10()
         ),
     ]
 
-    exit = new exit_door(0.7*win_width,0.22*win_height)
+    exit = new exit_door(0.75*win_width,0.24*win_height)
 }

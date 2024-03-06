@@ -30,6 +30,36 @@
     canvas{
         border: 1px solid black;
     }
+    .display_infos{
+        position: absolute;
+        font-size: 5dvh;
+        bottom: calc(10dvh + 2px);
+        color: rgba(78, 78, 78, 0.539);
+    }
+    #restart{
+        position: absolute;
+        top: 50%;
+        transform: translateY(-50%);
+        right: 2lvw;
+        background: transparent;
+        border: none;
+        cursor: pointer;
+    }
+    #restart:focus-visible{
+        border: none;
+    }
+    #restart path {
+        stroke: rgba(128, 128, 128, 0.622);
+    }
+    #restart:hover path {
+        stroke: rgb(71, 70, 70);
+    }
+    #display_level{
+        left: 2lvw;
+    }
+    #display_time{
+        right: 2lvw;
+    }
     #instructions{
         position: absolute;
         top: 30%;
@@ -68,11 +98,20 @@
         #pad{
             display: none;
         }
-        
+        .display_infos{
+            bottom: 2px;
+        }
     }
 </style>
 <body>
     <div id = "instructions"></div>
+    <div class = "display_infos" id = "display_level"></div>
+    <div class = "display_infos" id = "display_time"></div>
+    <button type = "button" id="restart" onclick="restart()">
+        <svg width="32px" height="32px" viewBox="0 0 24 24" fill="none" xmlns="http://www.w3.org/2000/svg">
+            <path d="M18.364 8.05026L17.6569 7.34315C14.5327 4.21896 9.46734 4.21896 6.34315 7.34315C3.21895 10.4673 3.21895 15.5327 6.34315 18.6569C9.46734 21.7811 14.5327 21.7811 17.6569 18.6569C19.4737 16.84 20.234 14.3668 19.9377 12.0005M18.364 8.05026H14.1213M18.364 8.05026V3.80762" stroke="#1C274C" strokeWidth="1.5" strokeLinecap="round" strokeLinejoin="round"/>
+        </svg>
+    </button>
     <canvas id="canvas" ></canvas>
     <div id="pad">
         <button id = "joystick_left" type = "button" ontouchstart="press(this, left)" ontouchend="unpress(this, left)"></button>
@@ -84,6 +123,9 @@
     var canvas = document.getElementById('canvas')
     var instructions = document.getElementById('instructions')
     var pad = document.getElementById('pad')
+    var display_time = document.getElementById('display_time')
+    var display_level = document.getElementById('display_level')
+
     canvas.width = win_width
     canvas.height = win_height
     const ctx = canvas.getContext("2d");
@@ -124,6 +166,12 @@
     {
         maxjump = currentLevel > 2 ? 2 : 1
     }
+    function restart()
+    {
+        currentLevel = 0
+        localStorage.setItem("current_level", currentLevel)
+        launchLevel()
+    }
     function launchLevel()
     {
         ball.x = coord_x_start
@@ -139,10 +187,13 @@
                 title: "🎉 GAME OVER 🎉",
                 html: "Congratulations !<br/>You made through all the levels.<br/>Keep in touch, many more are yet to come ! 🔵",
               });
-            localStorage.setItem("current_level", 0)
+            time = 0
             currentLevel = 0
+            localStorage.setItem('timer', time)
+            localStorage.setItem("current_level", 0)
             level0()
         }
+        display_level.innerText = currentLevel
         setMaxJump()
     }
 
@@ -311,7 +362,7 @@
     /* MOVES */
 
     let jumpcount = 0
-    let jumpHeight = win_height < 500  ? 7 : (win_width < 500  ? 9 : 10)
+    let jumpHeight = win_height < 500  ? 8 : (win_width < 500  ? 9 : 12)
     // if(win_width >= 1900 && win_height >= 915)
     // {
     //     jumpHeight = 12
@@ -383,5 +434,29 @@
     
     
     draw()
+
+    /* TIMER */
+    var time = localStorage.getItem('timer') != null ? parseInt(localStorage.getItem('timer')) : 0
+    const tick_time = 100 // ms
+    function refreshTimer()
+    {
+        let time_in_seconds = time / 1000 // float
+
+        const milliseconds = time_in_seconds - parseInt(time_in_seconds)
+
+        const hours = parseInt(time_in_seconds / 3600)
+        time_in_seconds -= (hours * 3600)
+
+        const minutes = parseInt(time_in_seconds / 60)
+        time_in_seconds -= (minutes * 60)
+
+        const seconds = time_in_seconds
+
+        display_time.innerText = hours+":"+minutes+":"+seconds.toFixed(1)
+
+        time += tick_time
+        localStorage.setItem('timer', time)
+    }
+    setInterval(refreshTimer, tick_time)
 </script>
 </html>
