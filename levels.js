@@ -189,7 +189,7 @@ function level10()
 function level11()
 {
     instructions.innerHTML = ("Newton's worst nightmare")
-
+    portals = []
     platforms = [
         new platform(
             0,
