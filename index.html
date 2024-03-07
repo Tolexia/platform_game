@@ -209,14 +209,10 @@
     {
         
         return (
-            ball.x >= exit.x_start && 
-            ball.x <= exit.x_end && 
-            ball.y >= exit.y_start && 
+            ball.x >= exit.x_start-ball.radius && 
+            ball.x <= exit.x_end+ball.radius && 
+            ball.y >= exit.y_start-ball.radius && 
             ball.y <= exit.y_end
-            // ball.x+ball.vx >= exit.x_start+ball.radius && 
-            // ball.x+ball.vx <= exit.x_end-ball.radius && 
-            // ball.y+ball.vy >= exit.y_start+ball.radius && 
-            // ball.y+ball.vy <= exit.y_end
         )
     }
 
