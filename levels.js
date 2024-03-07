@@ -9,6 +9,7 @@ function level0()
     instructions.innerHTML = isMobile ? "Press Left or Right joystick to move" : ("Use Left and Right arrows to move")
     platforms = []
     portals = []
+    gravity_inverters = []
     exit = new exit_door(0.85*win_width, win_height)
 }
 function level1()
@@ -119,7 +120,7 @@ function level7()
 function level8()
 {
     platforms = [
-        new platform(win_width-platform_width,0.8*win_height, platform_width),
+        new platform(win_width-(1.5*platform_width),0.8*win_height, platform_width),
         new platform(0.5*win_width,0.6*win_height, platform_width),
         new platform(0.25*win_width,0.4*win_height, platform_width),
         new platform(0 ,0.2*win_height, platform_width),
@@ -197,6 +198,11 @@ function level11()
             platform_width
         ),
         new platform(
+            platform_width+20, 
+            0.6*win_height, 
+            win_width - (2 * (platform_width+20))
+        ),
+        new platform(
             win_width-platform_width,
             (0.6*win_height-30), 
             platform_width
@@ -212,7 +218,7 @@ function level11()
     ]
 
     exit = new exit_door(
-        win_width-platform_width+(platform_width/4),
+        win_width-30,
         (0.6*win_height-30)
     )
 }

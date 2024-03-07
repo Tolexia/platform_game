@@ -310,10 +310,6 @@
                     ball.x <= entrance.x_end && 
                     ball.y >= entrance.y_start && 
                     ball.y <= entrance.y_end
-                    // ball.x+ball.vx >= entrance.x_start+ball.radius && 
-                    // ball.x+ball.vx <= entrance.x_end-ball.radius && 
-                    // ball.y+ball.vy >= entrance.y_start+ball.radius && 
-                    // ball.y+ball.vy <= entrance.y_end
                 )
                 {
                     ball.x = entrance.bound.x_start + (portal.width / 2)
@@ -351,18 +347,20 @@
             ball.vx = 0;
         }
 
-         // Draw gravity_inverts
-         for(const gravity_inverter of gravity_inverters)
+        // Draw gravity_inverts
+        let isInverted = false
+        for(const gravity_inverter of gravity_inverters)
         {
             gravity_inverter.draw()
 
             if(
                 ball.x >= gravity_inverter.x_start && 
                 ball.x <= gravity_inverter.x_end && 
-                ball.y <= (gravity_inverter.y_start - 40)
+                ball.y <= (gravity_inverter.y_start) 
             )
             {
-                ball.vy = Math.abs(ball.vy)
+                ball.vy = -Math.abs(ball.vy)
+                isInverted = true
                 break;
             }
         }
@@ -371,7 +369,7 @@
         ball.y += ball.vy;
 
         ball.vy *= inertia ;
-        ball.vy += gravityTick;
+        ball.vy += isInverted ? -(gravityTick/2) : gravityTick;
 
         ball.vx *= inertia
         

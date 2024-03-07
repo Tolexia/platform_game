@@ -8,11 +8,6 @@ class gravity_inverter {
         this.y_end = y+height
     }
     draw(){
-           // platform
-           ctx.fillStyle = "grey"
-           ctx.fillRect(this.x_start, this.y_start, this.width, this.height);
-   
-           // orange line
            ctx.beginPath();
            ctx.moveTo(this.x_start, this.y_start);
            ctx.lineTo(this.x_end, this.y_start);
