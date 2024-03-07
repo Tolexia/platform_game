@@ -2,8 +2,8 @@ class portal {
     // coords start from bottom
     constructor(entrance_coords, exit_coords)
     {
-        this.width = 40
-        this.height = 55
+        this.width = 30
+        this.height = 50
         
         this.entrance = {
             x_start : entrance_coords.x-this.width,

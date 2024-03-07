@@ -3,8 +3,8 @@ class exit_door {
     constructor(x,y){
         this.x_end = x
         this.y_end = y
-        this.width = 40
-        this.height = 55
+        this.width = 30
+        this.height = 50
         this.x_start = this.x_end-this.width
         this.y_start = this.y_end-this.height
     }

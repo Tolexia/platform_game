@@ -70,6 +70,8 @@ function level5()
 }
 function level6()
 {
+    instructions.innerHTML = ("Say hello to Portals")
+
     platforms = [
         new platform(0*win_width,0.9*win_height, platform_width*2),
         new platform(win_width-(platform_width*2),0.2*win_height, platform_width*2),
@@ -183,4 +185,34 @@ function level10()
     ]
 
     exit = new exit_door(0.75*win_width,0.24*win_height)
+}
+function level11()
+{
+    instructions.innerHTML = ("Newton's worst nightmare")
+
+    platforms = [
+        new platform(
+            0,
+            0.8*win_height, 
+            platform_width
+        ),
+        new platform(
+            win_width-platform_width,
+            (0.6*win_height-30), 
+            platform_width
+        ),
+    ]
+
+    gravity_inverters = [
+        new gravity_inverter(
+            platform_width+20, 
+            0.6*win_height, 
+            win_width - (2 * (platform_width+20))
+        )
+    ]
+
+    exit = new exit_door(
+        win_width-platform_width+(platform_width/4),
+        (0.6*win_height-30)
+    )
 }
