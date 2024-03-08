@@ -235,7 +235,7 @@ function level12()
         new platform( // g_i
             0, 
             0.65*win_height, 
-            big_platform
+            win_width/3.33
         ),
         new platform(
             (win_width/2)-(big_platform/2),
@@ -243,9 +243,9 @@ function level12()
             big_platform
         ),
         new platform( // g_i
-            win_width-big_platform,
+            win_width-(win_width/3.33),
             0.45*win_height, 
-            big_platform
+            win_width/3.33
         ),
         new platform(
             0,
@@ -258,17 +258,63 @@ function level12()
         new gravity_inverter(
             0, 
             0.65*win_height, 
-            big_platform
+            win_width/3.33
         ),
         new gravity_inverter(
-            win_width-big_platform,
+            win_width-(win_width/3.33),
             0.45*win_height, 
-            big_platform
+            win_width/3.33
         )
     ]
 
     exit = new exit_door(
         30,
+        0.1*win_height, 
+    )
+}
+
+function level13()
+{
+    portals = []
+    platforms = [
+        new platform( // g_i
+            0, 
+            win_height-(25), 
+            win_width/3.33
+        ),
+        new platform(
+            (win_width/3),
+            0.3*win_height, 
+            30,
+            0.7*win_height
+        ),
+        new platform(
+            win_width-platform_width,
+            0.1*win_height, 
+            platform_width,
+        ),
+        new platform(
+            win_width-big_platform,
+            0.75*win_height, 
+            big_platform,
+        ),
+        new platform(
+            (win_width/3)+30,
+            0.5*win_height, 
+            big_platform,
+        ),
+    ]
+
+    gravity_inverters = [
+        new gravity_inverter(
+            0, 
+            win_height-(25), 
+            win_width/3.33
+        ),
+    ]
+
+    exit = new exit_door(
+        win_width-20,
         0.1*win_height, 
     )
 }

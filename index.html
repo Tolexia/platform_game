@@ -267,13 +267,26 @@
         for(const platform of platforms)
         {
             platform.draw()
+
+            const withinFloor = (
+                ball.x + ball.vx >= platform.x_start - (ball.radius/2) && 
+                ball.x + ball.vx <= platform.x_end + (ball.radius/2) && 
+                ball.y + ball.vy  >= platform.y_start + (ball.radius/2) && 
+                ball.y + ball.vy  <= platform.y_end-(ball.radius/2)
+            )
+            if(withinFloor)
+            {
+                blockX = true
+            }
             if(
-                ball.x + ball.vx >= platform.x_start - ball.radius && 
-                ball.x + ball.vx <= platform.x_end + ball.radius
+                ball.x + ball.vx >= platform.x_start && 
+                ball.x + ball.vx <= platform.x_end
             )
             {
                 const onFloor = (ball.y + ball.vy  >= platform.y_start - ball.radius) && (ball.y + ball.vy <= platform.y_end - ball.radius)
                 const underneathFloor = (ball.y + ball.vy  <= platform.y_end + ball.radius)  && (ball.y + ball.vy >= platform.y_start + ball.radius)
+                
+                
                 if(
                     onFloor || underneathFloor
                 )
@@ -281,20 +294,13 @@
                     blockY = true
                     if(onFloor) jumpcount = 0
                 }
-                const withinFloor = (
-                       (ball.y + ball.vy <= platform.y_end + ball.radius) 
-                       && (ball.y + ball.vy  >= platform.y_start)
-                       && (
-                        (ball.x + ball.vx <= platform.x_start + (ball.radius*2))
-                       || (ball.x + ball.vx >= platform.x_end - (ball.radius*2))
-                       )
-                )
-                if(withinFloor) blockX = true
+               
 
                 // Platform
                 if(ball.y < platform.y_start && platform.y_start < height_platform_under_ball) 
                     height_platform_under_ball = platform.y_start
             }
+            
         }
 
         // Draw Portals
@@ -339,7 +345,7 @@
         // X
         if(blockX)
         {
-            ball.vx = -ball.vx / 2
+            ball.vx = 0
         }
         else if (
             ball.x + ball.vx >= canvas.width - ball.radius ||
