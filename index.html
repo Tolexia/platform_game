@@ -202,16 +202,18 @@
     }
 
     launchLevel()
-    
+
+    let debug = true
 
     var hasWon = false;
+    const diameter = 2*ball.radius
+    const bounding_adjuster = ball.radius
     function checkHasWon()
     {
-        
         return (
-            ball.x >= exit.x_start-ball.radius && 
-            ball.x <= exit.x_end+ball.radius && 
-            ball.y >= exit.y_start-ball.radius && 
+            ball.x-diameter >= exit.x_start+bounding_adjuster && 
+            ball.x-diameter <= exit.x_end+bounding_adjuster && 
+            ball.y+diameter >= exit.y_start && 
             ball.y <= exit.y_end
         )
     }
@@ -254,25 +256,24 @@
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
-        exit.draw()
+        exit.draw();
         
-        //if(!hasWon)
-            ball.draw();
+        ball.draw();
 
         let blockX = false
         let blockY = false
-
+        let height_platform_under_ball = win_height
         // Draw Platforms
-        for(const line of platforms)
+        for(const platform of platforms)
         {
-            line.draw()
+            platform.draw()
             if(
-                ball.x + ball.vx >= line.x_start - ball.radius && 
-                ball.x + ball.vx <= line.x_end + ball.radius
+                ball.x + ball.vx >= platform.x_start - ball.radius && 
+                ball.x + ball.vx <= platform.x_end + ball.radius
             )
             {
-                const onFloor = (ball.y + ball.vy  >= line.y_start - ball.radius) && (ball.y + ball.vy <= line.y_end - ball.radius)
-                const underneathFloor = (ball.y + ball.vy  <= line.y_end + ball.radius)  && (ball.y + ball.vy >= line.y_start + ball.radius)
+                const onFloor = (ball.y + ball.vy  >= platform.y_start - ball.radius) && (ball.y + ball.vy <= platform.y_end - ball.radius)
+                const underneathFloor = (ball.y + ball.vy  <= platform.y_end + ball.radius)  && (ball.y + ball.vy >= platform.y_start + ball.radius)
                 if(
                     onFloor || underneathFloor
                 )
@@ -281,14 +282,18 @@
                     if(onFloor) jumpcount = 0
                 }
                 const withinFloor = (
-                       (ball.y + ball.vy <= line.y_end + ball.radius) 
-                       && (ball.y + ball.vy  >= line.y_start)
+                       (ball.y + ball.vy <= platform.y_end + ball.radius) 
+                       && (ball.y + ball.vy  >= platform.y_start)
                        && (
-                        (ball.x + ball.vx <= line.x_start + (ball.radius*2))
-                       || (ball.x + ball.vx >= line.x_end - (ball.radius*2))
+                        (ball.x + ball.vx <= platform.x_start + (ball.radius*2))
+                       || (ball.x + ball.vx >= platform.x_end - (ball.radius*2))
                        )
                 )
                 if(withinFloor) blockX = true
+
+                // Platform
+                if(ball.y < platform.y_start && platform.y_start < height_platform_under_ball) 
+                    height_platform_under_ball = platform.y_start
             }
         }
 
@@ -302,8 +307,8 @@
             {
                 
                 if(
-                    ball.x >= entrance.x_start && 
-                    ball.x <= entrance.x_end && 
+                    ball.x-diameter >= entrance.x_start+bounding_adjuster && 
+                    ball.x-diameter <= entrance.x_end+bounding_adjuster && 
                     ball.y >= entrance.y_start && 
                     ball.y <= entrance.y_end
                 )
@@ -350,6 +355,7 @@
             gravity_inverter.draw()
 
             if(
+                gravity_inverter.y_start == height_platform_under_ball && 
                 ball.x >= gravity_inverter.x_start && 
                 ball.x <= gravity_inverter.x_end && 
                 ball.y <= (gravity_inverter.y_start) 
@@ -357,7 +363,6 @@
             {
                 ball.vy = -Math.abs(ball.vy)
                 isInverted = true
-                break;
             }
         }
 
