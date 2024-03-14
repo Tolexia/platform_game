@@ -268,16 +268,7 @@
         {
             platform.draw()
 
-            const withinFloor = (
-                ball.x + ball.vx >= platform.x_start - (ball.radius/2) && 
-                ball.x + ball.vx <= platform.x_end + (ball.radius/2) && 
-                ball.y + ball.vy  >= platform.y_start + (ball.radius/2) && 
-                ball.y + ball.vy  <= platform.y_end-(ball.radius/2)
-            )
-            if(withinFloor)
-            {
-                blockX = true
-            }
+            // Handling platform outside boundings
             if(
                 ball.x + ball.vx >= platform.x_start && 
                 ball.x + ball.vx <= platform.x_end
@@ -292,15 +283,48 @@
                 )
                 {
                     blockY = true
-                    if(onFloor) jumpcount = 0
+                    if(onFloor)
+                    {
+                        ball.y = platform.y_start - ball.radius
+                        jumpcount = 0
+                    }
+                    if(underneathFloor){
+                        ball.y = platform.y_end + ball.radius
+                    }
                 }
                
 
-                // Platform
+                // Platform under ball ?
                 if(ball.y < platform.y_start && platform.y_start < height_platform_under_ball) 
                     height_platform_under_ball = platform.y_start
             }
-            
+
+            // Handling platform within boundings
+            if ( 
+                ball.y + ball.vy  >= platform.y_start + ball.radius  && 
+                ball.y + ball.vy  <= platform.y_end - ball.radius
+            )
+            {
+                const withinFloorFromLeft = (
+                    ball.x + ball.vx >= platform.x_start - ball.radius && 
+                    ball.x + ball.vx <= platform.x_end - ball.radius
+                    
+                );
+                const withinFloorFromRight = (
+                    ball.x + ball.vx >= platform.x_start + ball.radius && 
+                    ball.x + ball.vx <= platform.x_end + ball.radius
+                    
+                );
+                
+                if(withinFloorFromLeft || withinFloorFromRight)
+                {
+                    blockX = true
+
+                    if(withinFloorFromLeft) ball.x = platform.x_start - ball.radius
+                    if(withinFloorFromRight) ball.x = platform.x_end + ball.radius
+                }
+            }
+
         }
 
         // Draw Portals

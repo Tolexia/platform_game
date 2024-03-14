@@ -288,10 +288,10 @@ function level13()
             30,
             0.7*win_height
         ),
-        new platform(
-            win_width-platform_width,
+        new platform( // exit
+            win_width-(win_width/3),
             0.1*win_height, 
-            platform_width,
+            (win_width/3),
         ),
         new platform(
             win_width-big_platform,
