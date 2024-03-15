@@ -283,7 +283,7 @@ function level13()
             win_width/3.33
         ),
         new platform(
-            (win_width/3),
+            (win_width/2),
             0.3*win_height, 
             30,
             0.7*win_height
@@ -299,7 +299,7 @@ function level13()
             big_platform,
         ),
         new platform(
-            (win_width/3)+30,
+            (win_width/2),
             0.5*win_height, 
             big_platform,
         ),
