@@ -331,30 +331,63 @@ function level14()
             win_height*0.5, 
             big_platform
         ),
-        new platform( 
+        new platform(  // ||
             (win_width/5)+(2*big_platform),
-            win_height*0.4, 
+            win_height*0.35, 
             ball.radius*5,
-            (win_height*0.1)+(ball.radius*5), 
+            (win_height*0.15)+(ball.radius*5), 
         ),
         new platform( // portal 1
             (win_width/5)-20,
-            win_height*0.4, 
+            win_height*0.35, 
             (2*big_platform)+45,
         ),
         new platform( // ||
             (win_width/5)+big_platform,
-            win_height*0.3, 
+            win_height*0.25, 
             ball.radius*5,
             (win_height*0.1)+ ball.radius*5, 
         ),
+        new platform( // ||
+            (win_width/5)+big_platform+45,
+            0, 
+            ball.radius*5,
+            (win_height*0.1)+(ball.radius*5), 
+        ),
         new platform( // =
-            (win_width/5)+big_platform-platform_width,
-            win_height*0.3, 
+            (win_width/5)+big_platform+45,
+            win_height*0.1, 
+            big_platform
+        ),
+        new platform( // =
+            (win_width/5)+big_platform*2.75,
+            win_height*0.2, 
             platform_width
+        ),
+        // Exit
+        new platform( // ||
+            win_width - (2*big_platform)-ball.radius*5,
+            (win_height*0.85), 
+            ball.radius*5,
+            (win_height*0.15), 
+        ),
+        new platform( // =
+            win_width - (2*big_platform)-ball.radius*5,
+            (win_height*0.85), 
+            2*big_platform+ball.radius*5
         ),
     ]
     portals = [
+        new portal(
+            {
+                x:(win_width/5)+big_platform+30+ball.radius*5+(platform_width/2), 
+                y:win_height*0.1, 
+            },
+            {
+                x:win_width-30, 
+                y:win_height
+            }
+        ),
         new portal(
             {
                 x:(win_width/5)+(1.75*big_platform), 
@@ -362,7 +395,7 @@ function level14()
             },
             {
                 x:win_width/5, 
-                y:0.4*win_height
+                y:0.35*win_height
             }
         ),
     ]
@@ -375,7 +408,7 @@ function level14()
     ]
 
     exit = new exit_door(
-        win_width-20,
-        0.1*win_height, 
+        win_width-big_platform-20,
+        win_height, 
     )
 }
