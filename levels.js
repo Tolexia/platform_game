@@ -318,3 +318,64 @@ function level13()
         0.1*win_height, 
     )
 }
+function level14()
+{
+    platforms = [
+        new platform( // g_i
+            win_width/5, 
+            win_height*0.8, 
+            big_platform
+        ),
+        new platform( // portal 1
+            (win_width/5)+big_platform,
+            win_height*0.5, 
+            big_platform
+        ),
+        new platform( 
+            (win_width/5)+(2*big_platform),
+            win_height*0.4, 
+            ball.radius*5,
+            (win_height*0.1)+(ball.radius*5), 
+        ),
+        new platform( // portal 1
+            (win_width/5)-20,
+            win_height*0.4, 
+            (2*big_platform)+45,
+        ),
+        new platform( // ||
+            (win_width/5)+big_platform,
+            win_height*0.3, 
+            ball.radius*5,
+            (win_height*0.1)+ ball.radius*5, 
+        ),
+        new platform( // =
+            (win_width/5)+big_platform-platform_width,
+            win_height*0.3, 
+            platform_width
+        ),
+    ]
+    portals = [
+        new portal(
+            {
+                x:(win_width/5)+(1.75*big_platform), 
+                y:win_height*0.5, 
+            },
+            {
+                x:win_width/5, 
+                y:0.4*win_height
+            }
+        ),
+    ]
+    gravity_inverters = [
+        new gravity_inverter(
+            win_width/5, 
+            win_height*0.8, 
+            big_platform
+        ),
+    ]
+
+    exit = new exit_door(
+        win_width-20,
+        0.1*win_height, 
+    )
+}
