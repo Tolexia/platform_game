@@ -5,6 +5,12 @@ let win_height = isMobile  ? window.innerHeight * 0.9 : window.innerHeight
 const platform_width = win_width > 800 ? 0.1*win_width : 0.2*win_width 
 const big_platform = win_width < 800 ? platform_width : platform_width*2
 
+let countLvls = 0;
+for (let index = 0; index < 50; index++) {
+    if(!window["level"+index])
+        break;
+    countLvls++;
+}
 function level0()
 {
     instructions.innerHTML = isMobile ? "Press Left or Right joystick to move" : ("Use Left and Right arrows to move")

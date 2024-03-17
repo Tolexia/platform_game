@@ -2,7 +2,7 @@ class portal {
     // coords start from bottom
     constructor(entrance_coords, exit_coords)
     {
-        this.width = 30
+        this.width = (window.innerWidth > 300 ? 30 : 20)
         this.height = 50
         
         this.entrance = {

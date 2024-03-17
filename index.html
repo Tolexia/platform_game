@@ -187,9 +187,17 @@
         }
         else
         {
+            let pb = localStorage.getItem('pb') != null ? parseInt(localStorage.getItem('pb')) : 9999999999999999
+            const levels_finished = localStorage.getItem('countLvls') != null ? parseInt(localStorage.getItem('countLvls')) : countLvls
+            if(time < pb || levels_finished != countLvls) 
+            {
+                pb = time
+                localStorage.setItem('pb', pb)
+                localStorage.setItem('countLvls', countLvls)
+            }
             Swal.fire({
                 title: "🎉 GAME OVER 🎉",
-                html: "Congratulations !<br/>You made through all the levels.<br/>Keep in touch, many more are yet to come ! 🔵",
+                html: `Congratulations !<br/>You made through all the ${levels_finished} levels in:<br/>${convertDurationToReadable()}<br/><br/>Keep in touch, many more are yet to come ! 🔵`,
               });
             time = 0
             currentLevel = 0
@@ -495,7 +503,8 @@
     /* TIMER */
     var time = localStorage.getItem('timer') != null ? parseInt(localStorage.getItem('timer')) : 0
     const tick_time = 100 // ms
-    function refreshTimer()
+
+    function convertDurationToReadable()
     {
         let time_in_seconds = time / 1000 // float
 
@@ -509,7 +518,11 @@
 
         const seconds = time_in_seconds
 
-        display_time.innerText = hours+":"+minutes+":"+seconds.toFixed(1)
+        return (hours+":"+minutes+":"+seconds.toFixed(1))
+    }
+    function refreshTimer()
+    {
+        display_time.innerText = convertDurationToReadable()
 
         time += tick_time
         localStorage.setItem('timer', time)
