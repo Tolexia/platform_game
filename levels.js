@@ -53,7 +53,7 @@ function level3()
         new platform(0.5*win_width,0.5*win_height, platform_width),
         new platform(0.7*win_width,0.3*win_height, platform_width),
     ]
-    exit = new exit_door(0.75*win_width,0.3*win_height)
+    exit = new exit_door(0.7*win_width + platform_width/2,0.3*win_height)
 }
 function level4()
 {
