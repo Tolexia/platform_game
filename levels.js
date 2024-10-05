@@ -131,8 +131,8 @@ function level8()
         new platform(0.5*win_width,0.6*win_height, platform_width),
         new platform(0.25*win_width,0.4*win_height, platform_width),
         new platform(0 ,0.2*win_height, platform_width),
-        new platform(0.25*win_width ,0.06*win_height, platform_width),
-        new platform(0.7*win_width ,0.06*win_height, platform_width),
+        new platform(0.25*win_width ,0.1*win_height, platform_width),
+        new platform(0.7*win_width ,0.1*win_height, platform_width),
         new platform(win_width-platform_width ,0.15*win_height, platform_width),
     ]
     portals = [
@@ -140,11 +140,11 @@ function level8()
         new portal(
             {
                 x:0.25*win_width+platform_width/2, 
-                y:0.06*win_height
+                y:0.1*win_height
             },
             {
                 x:0.7*win_width+platform_width/2, 
-                y:0.06*win_height
+                y:0.1*win_height
             }
         ),
     ]

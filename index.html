@@ -131,7 +131,6 @@
     canvas.height = win_height
     const ctx = canvas.getContext("2d");
     ctx.imageSmoothingEnabled = true;
-    let raf;
 
     const coord_x_start = win_width*0.1
     const coord_y_start = win_height*0.95
@@ -230,36 +229,29 @@
 
 
     /* ANIMATION */
+    let fpsMax = 60
     let frameCount = 0;
-    let ellapsedTime = window.performance.now()
-    let hasInitFrameRate = false
-    let gravityTick = 0.28
-    let inertia = 0.97
+    let lastSecond = parseInt(Date.now() / 1000)
+    let fpsInterval, startTime, then, now, elapsed
+    const gravityTick = 0.16
+    const inertia =  0.985
+
+    function startAnimating(fps) {
+        fpsInterval = 1000 / fps;
+        then = Date.now();
+        startTime = then;
+        draw();
+    }
+
     function draw() 
     {
-        // Lock framerate to 60
-        if(!hasInitFrameRate)
-        {
-            if(window.performance.now() - ellapsedTime >= 1000)
-            {
-                if(frameCount >= 120)
-                {
-                    gravityTick = 0.16
-                    inertia =  0.99
-                }
-                    
-                if(frameCount >= 180)
-                {
-                    gravityTick = 0.08
-                    inertia =  0.999
-                }
-                
-                hasInitFrameRate = true
-            }
-            else
-                frameCount++;
-        }
+        requestAnimationFrame(draw)
 
+
+        now = Date.now();
+        elapsed = now - then;
+
+        if (elapsed <= fpsInterval)  return;
         
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
@@ -421,13 +413,12 @@
             hasWon = false
         }
         
-        raf = window.requestAnimationFrame(draw);
     }
 
     /* MOVES */
 
     let jumpcount = 0
-    let jumpHeight = win_height < 500  ? 8 : (win_width < 500  ? 9 : 12)
+    let jumpHeight = (win_height/250) + (win_width/250)
     // if(win_width >= 1900 && win_height >= 915)
     // {
     //     jumpHeight = 12
@@ -455,7 +446,7 @@
     })
 
     const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
-    const horizontalTick = horizontalLimit / 17
+    const horizontalTick = horizontalLimit / 20
 
     
     function up(){
