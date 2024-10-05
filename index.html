@@ -227,6 +227,7 @@
 
     var teleporting = false
 
+    const isPortrait = screen.orientation.type.match("portrait")
 
     /* ANIMATION */
     let fpsMax = 60
@@ -234,7 +235,7 @@
     let lastSecond = parseInt(Date.now() / 1000)
     let fpsInterval, startTime, then, now, elapsed
     const gravityTick = 0.16
-    const inertia =  0.985
+    const inertia =  isPortrait ? 0.92 : 0.95
 
     function startAnimating(fps) {
         fpsInterval = 1000 / fps;
@@ -399,7 +400,6 @@
         ball.x += ball.vx;
         ball.y += ball.vy;
 
-        ball.vy *= inertia ;
         ball.vy += isInverted ? -(gravityTick/2) : gravityTick;
 
         ball.vx *= inertia
@@ -418,11 +418,8 @@
     /* MOVES */
 
     let jumpcount = 0
-    let jumpHeight = (win_height/250) + (win_width/250)
-    // if(win_width >= 1900 && win_height >= 915)
-    // {
-    //     jumpHeight = 12
-    // }
+    let jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 6 : 7)
+
     let pressingUp = false
     let pressingDown = false
     let pressingLeft = false
