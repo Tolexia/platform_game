@@ -246,133 +246,112 @@
 
     function draw() 
     {
-        requestAnimationFrame(draw)
-
+        requestAnimationFrame(draw);
 
         now = Date.now();
         elapsed = now - then;
 
-        if (elapsed <= fpsInterval)  return;
-        
+        if (elapsed <= fpsInterval) return;
+
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
         exit.draw();
-        
         ball.draw();
 
-        let blockX = false
-        let blockY = false
-        let height_platform_under_ball = win_height
+        let blockX = false;
+        let blockY = false;
+        let height_platform_under_ball = win_height;
+
+        let nextX = ball.x + ball.vx;
+        let nextY = ball.y + ball.vy;
+
         // Draw Platforms
-        for(const platform of platforms)
-        {
-            platform.draw()
+        for (const platform of platforms) {
+            platform.draw();
 
-            // Handling platform outside boundings
-            if(
-                ball.x + ball.vx >= platform.x_start && 
-                ball.x + ball.vx <= platform.x_end
-            )
-            {
-                const onFloor = (ball.y + ball.vy  >= platform.y_start - ball.radius) && (ball.y + ball.vy <= platform.y_end - ball.radius)
-                const underneathFloor = (ball.y + ball.vy  <= platform.y_end + ball.radius)  && (ball.y + ball.vy >= platform.y_start + ball.radius)
-                
-                
-                if(
-                    onFloor || underneathFloor
-                )
-                {
-                    blockY = true
-                    if(onFloor)
-                    {
-                        ball.y = platform.y_start - ball.radius
-                        jumpcount = 0
-                    }
-                    if(underneathFloor){
-                        ball.y = platform.y_end + ball.radius
-                    }
+            // Vérification des collisions anticipées pour l'axe Y (vertical)
+            if (ball.x + ball.vx >= platform.x_start && ball.x + ball.vx <= platform.x_end) {
+                const nextBottom = nextY + ball.radius;
+                const currentBottom = ball.y + ball.radius;
+                const platformTop = platform.y_start;
+                const platformBottom = platform.y_end;
+
+                // Ball is falling onto the platform
+                if (currentBottom <= platformTop && nextBottom >= platformTop) {
+                    ball.y = platformTop - ball.radius;
+                    blockY = true;
+                    ball.vy = 0;
+                    jumpcount = 0;
                 }
-               
 
-                // Platform under ball ?
-                if(ball.y < platform.y_start && platform.y_start < height_platform_under_ball) 
-                    height_platform_under_ball = platform.y_start
-            }
+                // Ball is jumping into the platform from below
+                if (currentBottom > (platformBottom + ball.radius) && nextY <= (platformBottom + ball.radius)) {
+                    ball.y = platformBottom + ball.radius;
+                    blockY = true;
+                    ball.vy = 0;
+                }
 
-            // Handling platform within boundings
-            if ( 
-                ball.y + ball.vy  >= platform.y_start + ball.radius  && 
-                ball.y + ball.vy  <= platform.y_end - ball.radius
-            )
-            {
-                const withinFloorFromLeft = (
-                    ball.x + ball.vx >= platform.x_start - ball.radius && 
-                    ball.x + ball.vx <= platform.x_end - ball.radius
-                    
-                );
-                const withinFloorFromRight = (
-                    ball.x + ball.vx >= platform.x_start + ball.radius && 
-                    ball.x + ball.vx <= platform.x_end + ball.radius
-                    
-                );
-                
-                if(withinFloorFromLeft || withinFloorFromRight)
-                {
-                    blockX = true
-
-                    if(withinFloorFromLeft) ball.x = platform.x_start - ball.radius
-                    if(withinFloorFromRight) ball.x = platform.x_end + ball.radius
+                // Platform under ball
+                if (ball.y < platform.y_start && platform.y_start < height_platform_under_ball) {
+                    height_platform_under_ball = platform.y_start;
                 }
             }
 
+            // Vérification des collisions anticipées pour l'axe X (horizontal)
+            const nextLeft = nextX - ball.radius;
+            const nextRight = nextX + ball.radius;
+            const platformLeft = platform.x_start;
+            const platformRight = platform.x_end;
+
+            // Ball moving from left to right
+            if (nextRight >= platformLeft && nextLeft < platformLeft && ball.y >= platform.y_start && ball.y <= platform.y_end) {
+                blockX = true;
+                ball.x = platformLeft - ball.radius;  // Adjust the position to the left of the platform
+            }
+
+            // Ball moving from right to left
+            if (nextLeft <= platformRight && nextRight > platformRight && ball.y >= platform.y_start && ball.y <= platform.y_end) {
+                blockX = true;
+                ball.x = platformRight + ball.radius;  // Adjust the position to the right of the platform
+            }
         }
 
         // Draw Portals
-        for(const portal of portals)
-        {
-            portal.draw()
-            if(teleporting) continue;
+        for (const portal of portals) {
+            portal.draw();
+            if (teleporting) continue;
 
-            for(entrance of [portal.entrance, portal.exit])
-            {
-                
-                if(
-                    ball.x-diameter >= entrance.x_start+bounding_adjuster && 
-                    ball.x-diameter <= entrance.x_end+bounding_adjuster && 
-                    ball.y >= entrance.y_start && 
+            for (entrance of [portal.entrance, portal.exit]) {
+                if (
+                    ball.x - diameter >= entrance.x_start + bounding_adjuster &&
+                    ball.x - diameter <= entrance.x_end + bounding_adjuster &&
+                    ball.y >= entrance.y_start &&
                     ball.y <= entrance.y_end
-                )
-                {
-                    ball.x = entrance.bound.x_start + (portal.width / 2)
-                    ball.y = entrance.bound.y_start + (portal.height / 2)
-                    teleporting = true
-                    setTimeout(() => teleporting = false, 500)
+                ) {
+                    ball.x = entrance.bound.x_start + (portal.width / 2);
+                    ball.y = entrance.bound.y_start + (portal.height / 2);
+                    teleporting = true;
+                    setTimeout(() => (teleporting = false), 500);
                     break;
                 }
             }
         }
-        
-        // Y
-        if(blockY && !pressingUp)
-        {
-            ball.vy = 0
-        }
-        else if ( ball.y + ball.vy >= canvas.height - ball.radius  ) 
-        {
+
+        // Axe Y
+        if (blockY && !pressingUp) {
+            ball.vy = 0;
+        } else if (ball.y + ball.vy >= canvas.height - ball.radius) {
             ball.vy = 0;
             jumpcount = 0;
-        }
-        else if (ball.y + ball.vy < ball.radius) {
+        } else if (ball.y + ball.vy < ball.radius) {
             ball.vy = 0;
         }
 
-        // X
-        if(blockX)
-        {
-            ball.vx = 0
-        }
-        else if (
+        // Axe X
+        if (blockX) {
+            ball.vx = 0;
+        } else if (
             ball.x + ball.vx >= canvas.width - ball.radius ||
             ball.x + ball.vx <= ball.radius
         ) {
@@ -380,40 +359,40 @@
         }
 
         // Draw gravity_inverts
-        let isInverted = false
-        for(const gravity_inverter of gravity_inverters)
-        {
-            gravity_inverter.draw()
+        let isInverted = false;
+        for (const gravity_inverter of gravity_inverters) {
+            gravity_inverter.draw();
 
-            if(
-                gravity_inverter.y_start == height_platform_under_ball && 
-                ball.x >= gravity_inverter.x_start && 
-                ball.x <= gravity_inverter.x_end && 
-                ball.y <= (gravity_inverter.y_start) 
-            )
-            {
-                ball.vy = -Math.abs(ball.vy)
-                isInverted = true
+            if (
+                gravity_inverter.y_start == height_platform_under_ball &&
+                ball.x >= gravity_inverter.x_start &&
+                ball.x <= gravity_inverter.x_end &&
+                ball.y <= gravity_inverter.y_start
+            ) {
+                ball.vy = -Math.abs(ball.vy);
+                isInverted = true;
             }
         }
 
         ball.x += ball.vx;
         ball.y += ball.vy;
 
-        ball.vy += isInverted ? -(gravityTick/2) : gravityTick;
+        ball.vy += isInverted ? -(gravityTick / 2) : gravityTick;
 
-        ball.vx *= inertia
-        
-        hasWon = checkHasWon()
-        if(hasWon)
-        {
-            currentLevel++
-            localStorage.setItem("current_level", currentLevel)
-            launchLevel()
-            hasWon = false
+        ball.vx *= inertia;
+
+        hasWon = checkHasWon();
+        if (hasWon) {
+            currentLevel++;
+            localStorage.setItem("current_level", currentLevel);
+            launchLevel();
+            hasWon = false;
         }
-        
-    }
+
+        then = now - (elapsed % fpsInterval);
+    }   
+
+
 
     /* MOVES */
 
@@ -486,7 +465,8 @@
     })
     
     
-    startAnimating(fpsMax)
+    // startAnimating(fpsMax)
+    draw()
 
     /* TIMER */
     var time = localStorage.getItem('timer') != null ? parseInt(localStorage.getItem('timer')) : 0
