@@ -231,11 +231,13 @@
 
     /* ANIMATION */
     let fpsMax = 60
+    let ellapsedTime = window.performance.now()
+    let hasInitFrameRate = false
     let frameCount = 0;
     let lastSecond = parseInt(Date.now() / 1000)
     let fpsInterval, startTime, then, now, elapsed
-    const gravityTick = isPortrait ? 0.28 : 0.16
-    const inertia =  isPortrait ? 0.92 : 0.95
+    let gravityTick = 0.28
+    const inertia =  isPortrait ? 0.91 : 0.95
 
     function startAnimating(fps) {
         fpsInterval = 1000 / fps;
@@ -248,12 +250,36 @@
     {
         requestAnimationFrame(draw);
 
-        // now = Date.now();
-        // elapsed = now - then;
-        // then = now - (elapsed % fpsInterval);
 
-        // if (elapsed <= fpsInterval) return;
+        if(!hasInitFrameRate)
+        {
+            if(window.performance.now() - ellapsedTime >= 1000)
+            {
+                if(frameCount >= 120)
+                {
+                    gravityTick = 0.16
+                    inertia =  0.975
+                }
+                    
+                if(frameCount >= 180)
+                {
+                    gravityTick = 0.08
+                    inertia =  0.98
+                }
+                
+                hasInitFrameRate = true
+            }
+            else
+                frameCount++;
+        }
 
+        now = Date.now();
+        elapsed = now - then;
+        then = now - (elapsed % fpsInterval);
+
+        
+        if (elapsed <= fpsInterval) return;
+        
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -397,8 +423,7 @@
     /* MOVES */
 
     let jumpcount = 0
-    // let jumpHeight = win_height < 500  ? 5 : (win_width < 500  ? 7 : 7)
-    let jumpHeight = win_height < 500  ? 5 : 7
+    let jumpHeight = win_height < 500  ? 8 : (win_width < 500  ? 9 : 12)
 
     let pressingUp = false
     let pressingDown = false
@@ -422,8 +447,8 @@
         }
     })
 
-    const horizontalLimit = (win_width < 500  ? win_width * 0.03 : (win_width < 1000  ? win_width * 0.015 : win_width * 0.0026))
-    const horizontalTick =  horizontalLimit / 20
+    const horizontalLimit = (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026)
+    const horizontalTick = win_width < 1000  ? horizontalLimit / 20 : horizontalLimit / 17
 
     
     function up(){
@@ -466,8 +491,8 @@
     })
     
     
-    // startAnimating(fpsMax)
-    draw()
+    startAnimating(fpsMax)
+    // draw()
 
     /* TIMER */
     var time = localStorage.getItem('timer') != null ? parseInt(localStorage.getItem('timer')) : 0
