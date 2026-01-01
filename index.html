@@ -230,56 +230,51 @@
     const isPortrait = screen.orientation.type.match("portrait")
 
     /* ANIMATION */
-    let fpsMax = 144
-    let ellapsedTime = window.performance.now()
-    let hasInitFrameRate = false
-    let frameCount = 0;
-    let lastSecond = parseInt(Date.now() / 1000)
-    let fpsInterval, startTime, then, now, elapsed
-    let gravityTick = 0.28
-    const inertia =  isPortrait ? 0.91 : 0.95
-
-    function startAnimating(fps) {
-        fpsInterval = 1000 / fps;
-        then = Date.now();
-        startTime = then;
-        draw();
-    }
+    const TARGET_FPS = 60
+    const TARGET_DELTA_TIME = 1000 / TARGET_FPS // ~16.67ms pour 60 FPS
+    
+    let lastTime = performance.now()
+    let gravityTickBase = 0.8
+    let inertiaBase = isPortrait ? 0.89 : 0.90
+    
+    // Valeurs de base pour la gravité et l'inertie selon le FPS détecté
+    let gravityTick = gravityTickBase
+    let inertia = inertiaBase
 
     function draw() 
     {
         requestAnimationFrame(draw);
 
+        const currentTime = performance.now()
+        const deltaTime = currentTime - lastTime
+        lastTime = currentTime
 
-        if(!hasInitFrameRate)
-        {
-            if(window.performance.now() - ellapsedTime >= 1000)
-            {
-                if(frameCount >= 120)
-                {
-                    gravityTick = 0.16
-                    inertia =  0.975
-                }
-                    
-                if(frameCount >= 180)
-                {
-                    gravityTick = 0.08
-                    inertia =  0.98
-                }
-                
-                hasInitFrameRate = true
-            }
-            else
-                frameCount++;
+        // Calcul du modificateur de vitesse basé sur le deltaTime réel
+        // Si deltaTime est plus grand que le target, on ralentit (modificateur < 1)
+        // Si deltaTime est plus petit que le target, on accélère (modificateur > 1)
+        const speedModifier = deltaTime / TARGET_DELTA_TIME
+
+        // Ajustement de la gravité et de l'inertie en fonction de la vitesse d'animation
+        // Plus les FPS sont élevés, plus on réduit la gravité et on augmente l'inertie
+        if (deltaTime < TARGET_DELTA_TIME * 0.7) {
+            // FPS très élevés (> ~85 FPS)
+            gravityTick = gravityTickBase * 0.7
+            // inertia = inertiaBase + (1 - inertiaBase) * 0.25
+
+            console.log("FPS très élevés")
+        } else if (deltaTime < TARGET_DELTA_TIME * 0.85) {
+            // FPS élevés (> ~70 FPS)
+            gravityTick = gravityTickBase * 0.9
+            inertia = inertiaBase + (1 - inertiaBase) * 0.1
+
+            console.log("FPS élevés")
+        } else {
+            // FPS normaux ou bas
+            gravityTick = gravityTickBase
+            inertia = inertiaBase
+
+            console.log("FPS normaux ou bas")
         }
-
-        now = Date.now();
-        elapsed = now - then;
-        then = now - (elapsed % fpsInterval);
-
-        
-        if (elapsed <= fpsInterval) return;
-        
 
         ctx.clearRect(0, 0, canvas.width, canvas.height);
 
@@ -290,15 +285,16 @@
         let blockY = false;
         let height_platform_under_ball = win_height;
 
-        let nextX = ball.x + ball.vx;
-        let nextY = ball.y + ball.vy;
+        // Utilisation du modificateur de vitesse pour les collisions anticipées
+        let nextX = ball.x + ball.vx * speedModifier;
+        let nextY = ball.y + ball.vy * speedModifier;
 
         // Draw Platforms
         for (const platform of platforms) {
             platform.draw();
 
             // Vérification des collisions anticipées pour l'axe Y (vertical)
-            if (ball.x + ball.vx >= platform.x_start && ball.x + ball.vx <= platform.x_end) {
+            if (nextX >= platform.x_start && nextX <= platform.x_end) {
                 const nextBottom = nextY + ball.radius;
                 const currentBottom = ball.y + ball.radius;
                 const platformTop = platform.y_start;
@@ -368,10 +364,10 @@
         // Axe Y
         if (blockY && !pressingUp) {
             ball.vy = 0;
-        } else if (ball.y + ball.vy >= canvas.height - ball.radius) {
+        } else if (nextY >= canvas.height - ball.radius) {
             ball.vy = 0;
             jumpcount = 0;
-        } else if (ball.y + ball.vy < ball.radius) {
+        } else if (nextY < ball.radius) {
             ball.vy = 0;
         }
 
@@ -379,8 +375,8 @@
         if (blockX) {
             ball.vx = 0;
         } else if (
-            ball.x + ball.vx >= canvas.width - ball.radius ||
-            ball.x + ball.vx <= ball.radius
+            nextX >= canvas.width - ball.radius ||
+            nextX <= ball.radius
         ) {
             ball.vx = 0;
         }
@@ -401,12 +397,19 @@
             }
         }
 
-        ball.x += ball.vx;
-        ball.y += ball.vy;
+        // Application du modificateur de vitesse aux déplacements
+        ball.x += ball.vx * speedModifier;
+        ball.y += ball.vy * speedModifier;
 
-        ball.vy += isInverted ? -(gravityTick / 2) : gravityTick;
+        // Application du modificateur de vitesse à la gravité
+        ball.vy += (isInverted ? -(gravityTick / 2) : gravityTick) * speedModifier;
 
-        ball.vx *= inertia;
+        // Application du modificateur à l'inertie
+        // Pour maintenir une réduction de vitesse constante sur une période donnée,
+        // on ajuste l'inertie en fonction du modificateur : i_adjusted = i^m
+        // où m est le modificateur de vitesse
+        const adjustedInertia = Math.pow(inertia, speedModifier)
+        ball.vx *= Math.max(0, Math.min(1, adjustedInertia));
 
         hasWon = checkHasWon();
         if (hasWon) {
@@ -447,8 +450,19 @@
         }
     })
 
-    const horizontalLimit = (win_width < 500  ? win_width * 0.05 : (win_width < 1000  ? win_width * 0.01 : win_width * 0.0026))
-    const horizontalTick = horizontalLimit / 17
+    let horizontalLimit = 0
+
+    if(win_width < 500) horizontalLimit = win_width * 0.01
+    // else if(win_width < 1000) horizontalLimit = win_width * 0.01
+    else if(win_width < 1000) horizontalLimit = win_width * 0.0075
+    else horizontalLimit = win_width * 0.004
+
+    // console.log("horizontalLimit", horizontalLimit)
+
+    let tick = 20
+    if(win_width < 500) tick = 22
+    else if(win_width < 1000) tick = 21
+    const horizontalTick = horizontalLimit / tick
 
     
     function up(){
@@ -491,8 +505,7 @@
     })
     
     
-    startAnimating(fpsMax)
-    // draw()
+    draw()
 
     /* TIMER */
     var time = localStorage.getItem('timer') != null ? parseInt(localStorage.getItem('timer')) : 0
