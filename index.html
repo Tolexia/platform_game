@@ -234,8 +234,26 @@
     const TARGET_DELTA_TIME = 1000 / TARGET_FPS // ~16.67ms pour 60 FPS
     
     let lastTime = performance.now()
-    let gravityTickBase = 0.8
+    let gravityTickBase = 0.85
     let inertiaBase = isPortrait ? 0.89 : 0.90
+
+    let jumpcount = 0
+    let jumpHeight = win_height < 500  ? 8 : (win_width < 500  ? win_height / 48 : win_height / 48)
+
+    let horizontalLimit = 0
+
+    if(win_width < 500) horizontalLimit = win_width * 0.01
+    // else if(win_width < 1000) horizontalLimit = win_width * 0.01
+    else if(win_width < 1000) horizontalLimit = win_width * 0.0075
+    else horizontalLimit = win_width * 0.004
+
+    // console.log("horizontalLimit", horizontalLimit)
+
+    let tick = 20
+    if(win_width < 500) tick = 22
+    else if(win_width < 1000) tick = 21
+    let tick_base = tick
+    let horizontalTick = horizontalLimit / tick
     
     // Valeurs de base pour la gravité et l'inertie selon le FPS détecté
     let gravityTick = gravityTickBase
@@ -258,7 +276,7 @@
         // Plus les FPS sont élevés, plus on réduit la gravité et on augmente l'inertie
         if (deltaTime < TARGET_DELTA_TIME * 0.7) {
             // FPS très élevés (> ~85 FPS)
-            gravityTick = gravityTickBase * 0.7
+            gravityTick = gravityTickBase * 0.9
             // inertia = inertiaBase + (1 - inertiaBase) * 0.25
 
             console.log("FPS très élevés")
@@ -272,6 +290,10 @@
             // FPS normaux ou bas
             gravityTick = gravityTickBase
             inertia = inertiaBase
+            
+            tick = tick_base / 2
+            horizontalTick = horizontalLimit / tick
+
 
             console.log("FPS normaux ou bas")
         }
@@ -425,9 +447,6 @@
 
     /* MOVES */
 
-    let jumpcount = 0
-    let jumpHeight = win_height < 500  ? 8 : (win_width < 500  ? 9 : 12)
-
     let pressingUp = false
     let pressingDown = false
     let pressingLeft = false
@@ -450,19 +469,7 @@
         }
     })
 
-    let horizontalLimit = 0
-
-    if(win_width < 500) horizontalLimit = win_width * 0.01
-    // else if(win_width < 1000) horizontalLimit = win_width * 0.01
-    else if(win_width < 1000) horizontalLimit = win_width * 0.0075
-    else horizontalLimit = win_width * 0.004
-
-    // console.log("horizontalLimit", horizontalLimit)
-
-    let tick = 20
-    if(win_width < 500) tick = 22
-    else if(win_width < 1000) tick = 21
-    const horizontalTick = horizontalLimit / tick
+   
 
     
     function up(){

@@ -69,10 +69,10 @@ function level4()
 function level5()
 {
     platforms = [
-        new platform(0*win_width,0.9*win_height, platform_width/2),
-        new platform(0.3*win_width - (platform_width/4),0.7*win_height, platform_width/2),
-        new platform(0.6*win_width,0.5*win_height, platform_width/2),
-        new platform(0.8*win_width,0.3*win_height, platform_width/2)
+        new platform(0*win_width,0.9*win_height, platform_width),
+        new platform(0.3*win_width - (platform_width/4),0.7*win_height, platform_width),
+        new platform(0.6*win_width,0.5*win_height, platform_width),
+        new platform(0.8*win_width,0.3*win_height, platform_width)
     ]
     exit = new exit_door(0.8*win_width+platform_width/4,0.3*win_height)
 }
@@ -128,7 +128,7 @@ function level8()
 {
     platforms = [
         new platform(win_width-(1.5*platform_width),0.8*win_height, platform_width),
-        new platform(0.5*win_width,0.6*win_height, platform_width),
+        new platform((0.5*win_width )+(platform_width/2),0.6*win_height, platform_width),
         new platform(0.25*win_width,0.4*win_height, platform_width),
         new platform(0 ,0.2*win_height, platform_width),
         new platform(0.25*win_width ,0.1*win_height, platform_width),
