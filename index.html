@@ -115,9 +115,9 @@
     </button>
     <canvas id="canvas" ></canvas>
     <div id="pad">
-        <button id = "joystick_left" type = "button" ontouchstart="press(this, 'left')" ontouchend="unpress(this, 'left')"></button>
+        <button id = "joystick_left" type = "button" ontouchstart="press(this, 'left', event)" ontouchend="unpress(this, 'left', event)" ontouchcancel="unpress(this, 'left', event)"></button>
         <div class="spacebar" ontouchstart="up()"></div>
-        <button id = "joystick_right" type = "button" ontouchstart="press(this, 'right')" ontouchend="unpress(this, 'right')"></button>
+        <button id = "joystick_right" type = "button" ontouchstart="press(this, 'right', event)" ontouchend="unpress(this, 'right', event)" ontouchcancel="unpress(this, 'right', event)"></button>
     </div>
 </body>
 <script>
@@ -494,13 +494,27 @@
             pressingRight = false 
     })
 
-    function press(button, direction){
-      if(direction == "left") {pressingLeft = true; left()}
-      if(direction == "right") {pressingRight = true; right()}
+    var leftTouchId = null
+    var rightTouchId = null
+    function press(button, direction, e){
+        if (e && e.changedTouches && e.changedTouches.length) {
+            var id = e.changedTouches[0].identifier
+            if (direction === "left") { leftTouchId = id; pressingLeft = true; left() }
+            if (direction === "right") { rightTouchId = id; pressingRight = true; right() }
+        } else {
+            if (direction === "left") { pressingLeft = true; left() }
+            if (direction === "right") { pressingRight = true; right() }
+        }
     }
-    function unpress(button, direction){
-        if(direction == "left") pressingLeft = false
-        if(direction == "right") pressingRight = false
+    function unpress(button, direction, e){
+        if (e && e.changedTouches && e.changedTouches.length) {
+            var id = e.changedTouches[0].identifier
+            if (direction === "left" && id === leftTouchId) { pressingLeft = false; leftTouchId = null }
+            if (direction === "right" && id === rightTouchId) { pressingRight = false; rightTouchId = null }
+        } else {
+            if (direction === "left") pressingLeft = false
+            if (direction === "right") pressingRight = false
+        }
     }
 
     screen.orientation.addEventListener("change", ()=> {
