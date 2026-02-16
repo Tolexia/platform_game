@@ -115,9 +115,9 @@
     </button>
     <canvas id="canvas" ></canvas>
     <div id="pad">
-        <button id = "joystick_left" type = "button" ontouchstart="press(this, left)" ontouchend="unpress(this, left)"></button>
+        <button id = "joystick_left" type = "button" ontouchstart="press(this, 'left')" ontouchend="unpress(this, 'left')"></button>
         <div class="spacebar" ontouchstart="up()"></div>
-        <button id = "joystick_right" type = "button" ontouchstart="press(this, right)" ontouchend="unpress(this, right)"></button>
+        <button id = "joystick_right" type = "button" ontouchstart="press(this, 'right')" ontouchend="unpress(this, 'right')"></button>
     </div>
 </body>
 <script>
@@ -494,15 +494,14 @@
             pressingRight = false 
     })
 
-    function press(button, callback){
-        window["pressInterval_"+button.id] = setInterval(() => {
-            callback()
-        }, 50)
+    function press(button, direction){
+      if(direction == "left") {pressingLeft = true; left()}
+      if(direction == "right") {pressingRight = true; right()}
     }
-    function unpress(button, callback){
-        clearInterval(window["pressInterval_"+button.id])
+    function unpress(button, direction){
+        if(direction == "left") pressingLeft = false
+        if(direction == "right") pressingRight = false
     }
-
 
     screen.orientation.addEventListener("change", ()=> {
         window.location.reload()
