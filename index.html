@@ -115,9 +115,9 @@
     </button>
     <canvas id="canvas" ></canvas>
     <div id="pad">
-        <button id = "joystick_left" type = "button" ontouchstart="left();press(this, 'left', event)" ontouchend="unpress(this, 'left', event)" ontouchcancel="unpress(this, 'left', event)"></button>
-        <div class="spacebar" ontouchstart="up()"></div>
-        <button id = "joystick_right" type = "button" ontouchstart="right();press(this, 'right', event)" ontouchend="unpress(this, 'right', event)" ontouchcancel="unpress(this, 'right', event)"></button>
+        <button id = "joystick_left" type = "button" ontouchstart="left();press(this, 'left', event)" ontouchend="unpress(this, 'left', event)"></button>
+        <div class="spacebar" ontouchstart="addPressed('up');up()"></div>
+        <button id = "joystick_right" type = "button" ontouchstart="right();press(this, 'right', event)" ontouchend="unpress(this, 'right', event)"></button>
     </div>
 </body>
 <script>
@@ -506,7 +506,15 @@
 
     var leftTouchId = null
     var rightTouchId = null
+    var currentPressed = []
+    function addPressed(direction){
+        currentPressed.push(direction)
+    }
+    function removePressed(direction){
+        currentPressed = currentPressed.filter(d => d !== direction)
+    }
     function press(button, direction, e){
+        addPressed(direction)
         if (e && e.changedTouches && e.changedTouches.length) {
             var id = e.changedTouches[0].identifier
             if (direction === "left") { leftTouchId = id; pressingLeft = true; left() }
@@ -517,6 +525,7 @@
         }
     }
     function unpress(button, direction, e){
+        removePressed(direction)
         if (e && e.changedTouches && e.changedTouches.length) {
             var id = e.changedTouches[0].identifier
             if (direction === "left" && id === leftTouchId) { pressingLeft = false; leftTouchId = null }
